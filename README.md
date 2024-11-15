@@ -1,7 +1,7 @@
 # M24 Signal Processing Project
 
-Team Name: Fast and Fourier
-
+Team Name: Fast and Fourier  
+For Ideas & Resources, check out [Overleaf document](https://www.overleaf.com/2318613779zwyqxhsfrsmn#377a1a).
 ## Problem Statements:
 1. Bird Recognition
     - Given a set of bird sounds, classifying them into different species.
