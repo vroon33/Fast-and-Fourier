@@ -1,0 +1,203 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{graphicx}
+\graphicspath{{Images/}}
+
+\usepackage{amsmath}
+\usepackage{geometry}
+\usepackage{fancyhdr}  % For header and footer
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{caption}
+
+% for drawing
+\usepackage{circuitikz}
+% Page setup
+\geometry{margin=1in}
+\setlength{\parindent}{0pt}  % No paragraph indentation
+\setlength{\parskip}{0.5em}  % Paragraph spacing
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{}
+\fancyhead[R]{VLSI Design}
+\fancyfoot[C]{\thepage}
+
+% Coding Template in Latex
+\usepackage{listings}
+\usepackage{color, soul}
+\usepackage{xcolor}
+
+\title{Signal Processing Project Ideas}
+\author{\\[-5ex] \large Fast and Furious \\16th November, 2024}
+\date{}
+
+\begin{document}
+\maketitle
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\section*{Problem-1 (Bird Recognition)}
+
+An idea is to try and upsample the signal. See if there are any patterns emerging. 
+
+We don't need to build a classifier, but just an identifier.
+
+F1.wav $\rightarrow$ Bird 3 \\
+F2.wav $\rightarrow$ Bird 1 \\
+F3.wav $\rightarrow$ probable Bird 2 \\
+F4.wav $\rightarrow$ probable Bird 1 \\
+F5.wav $\rightarrow$ Bird 1 \\
+F6.wav $\rightarrow$ Bird 3 \\
+F7.wav $\rightarrow$ probable Bird 1 \\
+F8.wav $\rightarrow$ Bird 2 \\
+
+For Bird 1: \\
+Sampling Frequency: 22050 Hz
+Signal Duration: 3.00 seconds
+Estimated SNR: 0.55 dB
+Noise Floor Level: 1.49e-01
+
+Dominant Frequencies (top 5):
+
+Peak 1: 3068.0 Hz (Magnitude: 4.82e+02)
+Peak 2: 3065.3 Hz (Magnitude: 4.54e+02)
+Peak 3: 3062.7 Hz (Magnitude: 4.41e+02)
+Peak 4: 3070.7 Hz (Magnitude: 3.73e+02)
+Peak 5: 3073.3 Hz (Magnitude: 3.72e+02)
+
+For Bird 2: \\
+Sampling Frequency: 22050 Hz
+Signal Duration: 3.00 seconds
+Estimated SNR: 0.99 dB
+Noise Floor Level: 1.14e-01
+
+Dominant Frequencies (top 5):
+
+Peak 1: 3939.0 Hz (Magnitude: 2.68e+02)
+Peak 2: 3914.7 Hz (Magnitude: 2.67e+02)
+Peak 3: 2510.0 Hz (Magnitude: 2.59e+02)
+Peak 4: 3040.0 Hz (Magnitude: 2.49e+02)
+Peak 5: 2598.7 Hz (Magni    tude: 2.48e+02)
+
+For Bird 3: \\
+Sampling Frequency: 22050 Hz
+Signal Duration: 3.00 seconds
+Estimated SNR: 2.54 dB
+Noise Floor Level: 1.59e-01
+
+Dominant Frequencies (top 5):
+
+Peak 1: 4128.3 Hz (Magnitude: 9.65e+02)
+Peak 2: 4134.7 Hz (Magnitude: 9.34e+02)
+Peak 3: 4126.3 Hz (Magnitude: 9.19e+02)
+Peak 4: 4116.3 Hz (Magnitude: 8.86e+02)
+Peak 5: 4124.0 Hz (Magnitude: 8.27e+02)
+
+
+F1: 
+Sampling Frequency: 22050 Hz
+Signal Duration: 3.00 seconds
+Estimated SNR: -1.09 dB
+Noise Floor Level: 1.82e-01
+
+Dominant Frequencies (top 5):
+
+Peak 1: 4149.0 Hz (Magnitude: 5.91e+02)
+Peak 2: 4137.7 Hz (Magnitude: 5.68e+02)
+Peak 3: 4160.7 Hz (Magnitude: 5.68e+02)
+Peak 4: 4172.3 Hz (Magnitude: 5.44e+02)
+Peak 5: 4167.3 Hz (Magnitude: 5.37e+02)
+
+F2:
+Sampling Frequency: 22050 Hz
+Signal Duration: 3.00 seconds
+Estimated SNR: 0.03 dB
+Noise Floor Level: 1.74e-01
+
+Dominant Frequencies (top 5):
+
+Peak 1: 6084.7 Hz (Magnitude: 6.39e+02)
+Peak 2: 2982.0 Hz (Magnitude: 5.97e+02)
+Peak 3: 2980.7 Hz (Magnitude: 5.65e+02)
+Peak 4: 2983.7 Hz (Magnitude: 5.51e+02)
+Peak 5: 2985.0 Hz (Magnitude: 5.13e+02)
+
+F3:
+Sampling Frequency: 22050 Hz
+Signal Duration: 3.00 seconds
+Estimated SNR: -2.50 dB
+Noise Floor Level: 1.83e-01
+
+Dominant Frequencies (top 5):
+
+Peak 1: 2524.0 Hz (Magnitude: 4.33e+02)
+Peak 2: 3040.0 Hz (Magnitude: 3.67e+02)
+Peak 3: 2577.7 Hz (Magnitude: 3.54e+02)
+Peak 4: 2510.3 Hz (Magnitude: 3.50e+02)
+Peak 5: 2574.3 Hz (Magnitude: 3.47e+02)
+
+F4:
+Sampling Frequency: 22050 Hz
+Signal Duration: 3.00 seconds
+Estimated SNR: 3.63 dB
+Noise Floor Level: 9.17e-02
+
+Dominant Frequencies (top 5):
+
+Peak 1: 4123.3 Hz (Magnitude: 8.61e+02)
+Peak 2: 4134.7 Hz (Magnitude: 7.70e+02)
+Peak 3: 4112.3 Hz (Magnitude: 7.50e+02)
+Peak 4: 4118.3 Hz (Magnitude: 6.56e+02)
+Peak 5: 4129.3 Hz (Magnitude: 6.51e+02)
+
+F5:
+Sampling Frequency: 22050 Hz
+Signal Duration: 3.00 seconds
+Estimated SNR: -3.45 dB
+Noise Floor Level: 2.31e-01
+
+Dominant Frequencies (top 5):
+
+Peak 1: 3068.0 Hz (Magnitude: 4.85e+02)
+Peak 2: 3065.3 Hz (Magnitude: 4.56e+02)
+Peak 3: 3062.7 Hz (Magnitude: 4.44e+02)
+Peak 4: 3070.7 Hz (Magnitude: 3.72e+02)
+Peak 5: 3073.3 Hz (Magnitude: 3.70e+02)
+
+F6:
+Sampling Frequency: 22050 Hz
+Signal Duration: 3.00 seconds
+Estimated SNR: -0.41 dB
+Noise Floor Level: 2.06e-01
+
+Dominant Frequencies (top 5):
+
+Peak 1: 4128.3 Hz (Magnitude: 9.67e+02)
+Peak 2: 4134.7 Hz (Magnitude: 9.35e+02)
+Peak 3: 4126.3 Hz (Magnitude: 9.17e+02)
+Peak 4: 4116.3 Hz (Magnitude: 8.83e+02)
+Peak 5: 4124.0 Hz (Magnitude: 8.29e+02)
+
+F7:
+Sampling Frequency: 22050 Hz
+Signal Duration: 3.00 seconds
+Estimated SNR: -5.19 dB
+Noise Floor Level: 2.58e-01
+
+Dominant Frequencies (top 5):
+
+Peak 1: 4296.0 Hz (Magnitude: 2.58e+02)
+Peak 2: 3078.3 Hz (Magnitude: 2.40e+02)
+Peak 3: 4291.3 Hz (Magnitude: 2.38e+02)
+Peak 4: 3073.7 Hz (Magnitude: 2.35e+02)
+Peak 5: 6336.0 Hz (Magnitude: 2.34e+02)
+\section*{Problem-2 (Heart Rate Estimation)}
+
+\section*{Problem-3 (Loudness Segmentation)}
+\subsection*{Key Points}
+
+
+
+\end{document}
