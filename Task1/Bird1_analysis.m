@@ -1,8 +1,9 @@
 % Read the audio file
 [y, Fs] = audioread('Bird1.wav');
 
-y = y(0.95*Fs : 2.5*Fs);
+% y = y(0.95*Fs : 2.5*Fs);
 % Compute FFT
+y = [y zeros(1, 2^nextpow2(length(y)) - length(y))];
 N = length(y);
 Y = fft(y);
 Y_shifted = fftshift(Y);
@@ -13,6 +14,7 @@ freq = (-N/2:N/2-1)*(Fs/N);
 
 % Only consider the positive half of the spectrum
 positive_freq_idx = freq > 0;
+
 positive_mag_spectrum = mag_spectrum(positive_freq_idx);
 positive_freq = freq(positive_freq_idx);
 
