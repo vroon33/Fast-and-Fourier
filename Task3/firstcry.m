@@ -117,10 +117,10 @@ function plotsig(audio, fs)
     grid on;
 end
 
-[audio, fs] = audioread('5.wav'); 
-stereoToMono(audio, fs);
+[audio, fs] = audioread('7.mp3'); 
+% stereoToMono(audio, fs);
 sound(audio, fs);
-[words, startTimes, endTimes, isLouder] = readTimeFile('5.txt');
+[words, startTimes, endTimes, isLouder] = readTimeFile('7.txt');
 
 % filteredAudio = applyBandpassFilter(audio, fs);
     % Apply low-pass filter below 100 Hz
@@ -140,16 +140,20 @@ sound(audio, fs);
       'PassbandRipple', 0.01);
   
   % Apply filters
-  lowPassedAudio = filter(lpFilt, audio);
-  highPassedAudio = filter(hpFilt, lowPassedAudio);
+    filteredAudio = noisefilter(audio,fs);
+    pause(1);
+    sound(filteredAudio, fs);
+    % figure;
+    % plotsig(filteredAudio, fs);
+    % title('Filtered Audio Signal');
+%   lowPassedAudio = filter(lpFilt, audio);
+%   highPassedAudio = filter(hpFilt, lowPassedAudio);
   
     % Play audio with proper pausing
     %   sound(lowPassedAudio, fs);
     %   pause(length(lowPassedAudio)/fs + 0.5);
      
-    
-
-      sound(highPassedAudio, fs);
+    % sound(highPassedAudio, fs);
     % pause(length(highPassedAudio)/fs + 1);  % Wait for the audio to finish
 
     % Plot the low-passed audio signal
@@ -160,20 +164,20 @@ sound(audio, fs);
 
     % Plot the high-passed audio signal
     subplot(2, 1, 2);
-    plotsig(highPassedAudio, fs);
-    title('High-passed Audio Signal');
+    plotsig(filteredAudio, fs);
+    title('Filtered Audio Signal');
+    % plotsig(highPassedAudio, fs);
+    % title('High-passed Audio Signal');
     % Play the filtered audio signal
     % sound(filteredAudio, fs);
-    % Plot the filtered audio signal
+    
     figure;
     subplot(2, 1, 1);
     plotfft(audio, fs);
-    title('FFT of Original Audio Signal');
-
+    % Plot the spectrogram
     subplot(2, 1, 2);
-    plotfft(highPassedAudio, fs);
-    title('FFT of High-passed Audio Signal');
-    
+    plotfft(filteredAudio, fs);
+
     % Print to verify the data
     for i = 1:length(words)
         fprintf('%s\t\t%f\t%f\t%d\n', words{i}, startTimes(i), endTimes(i), isLouder(i));
