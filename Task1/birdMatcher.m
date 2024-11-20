@@ -157,7 +157,7 @@ function plotComparison(y1, y2, Fs, windowLength, overlap, nfft)
 end
 
 % Define your files
-taskFile = 'Asine.wav';
+taskFile = 'F.wav';
 referenceFiles = {'bird1.wav', 'bird2.wav', 'bird3.wav'};
 
 % Run the matching
