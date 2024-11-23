@@ -3,7 +3,7 @@ function matchBirdSound()
     [bird1, fs1] = audioread('bird1.wav');
     [bird2, fs2] = audioread('bird2.wav');
     [bird3, fs3] = audioread('bird3.wav');
-    [taskFile, fsTask] = audioread('F5.wav');
+    [taskFile, fsTask] = audioread('F8.wav');
     
     % Ensure all files have same sampling rate
     if fs1 ~= fs2 || fs2 ~= fs3 || fs3 ~= fsTask
@@ -31,35 +31,35 @@ function matchBirdSound()
         bestIndex, bestScore*100);
     
     % Plot spectrograms for visual comparison
-    figure;
+    % figure;
+    % 
+    % % Define spectrogram parameters
+    % window = hamming(256);
+    % noverlap = 128;
+    % nfft = 512;
     
-    % Define spectrogram parameters
-    window = hamming(256);
-    noverlap = 128;
-    nfft = 512;
+    % subplot(2,2,1);
+    % spectrogram(taskFile, window, noverlap, nfft, fsTask, 'yaxis');
+    % title('Task File Spectrogram');
+    % 
+    % subplot(2,2,2);
+    % spectrogram(bird1, window, noverlap, nfft, fs1, 'yaxis');
+    % title('Bird 1 Spectrogram');
     
-    subplot(2,2,1);
-    spectrogram(taskFile, window, noverlap, nfft, fsTask, 'yaxis');
-    title('Task File Spectrogram');
+    % subplot(2,2,3);
+    % spectrogram(bird2, window, noverlap, nfft, fs2, 'yaxis');
+    % title('Bird 2 Spectrogram');
     
-    subplot(2,2,2);
-    spectrogram(bird1, window, noverlap, nfft, fs1, 'yaxis');
-    title('Bird 1 Spectrogram');
-    
-    subplot(2,2,3);
-    spectrogram(bird2, window, noverlap, nfft, fs2, 'yaxis');
-    title('Bird 2 Spectrogram');
-    
-    subplot(2,2,4);
-    spectrogram(bird3, window, noverlap, nfft, fs3, 'yaxis');
-    title('Bird 3 Spectrogram');
+    % subplot(2,2,4);
+    % spectrogram(bird3, window, noverlap, nfft, fs3, 'yaxis');
+    % title('Bird 3 Spectrogram');
     
     % Plot correlation results in a new figure
-    figure;
-    bar(corrValues*100);
-    title('Bird Sound Matching Results');
-    xlabel('Bird Reference Number');
-    ylabel('Match Percentage (%)');
-    ylim([0 100]);
-    grid on;
+    % figure;
+    % bar(corrValues*100);
+    % title('Bird Sound Matching Results');
+    % xlabel('Bird Reference Number');
+    % ylabel('Match Percentage (%)');
+    % ylim([0 100]);
+    % grid on;
 end

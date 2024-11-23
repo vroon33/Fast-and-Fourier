@@ -1,11 +1,9 @@
-% Calls the Peak_processing function
+% Two example vectors
+x = [1; 2; 3; 4; 5];
+y = [0; 10; 6; 5; -4];
 
-% Read the audio file
-[y, Fs] = audioread('bird1.wav');
+% Compute similarity score
+similarityScore = xcorr(x', y')
 
-% Call the Peak_Processing function
-[Top_Peak_Frequencies, Top_Peak_Magnitudes] = Peak_Processing(y, Fs);
-
-% Display the top 10 peaks and their frequencies
-fprintf('Top 10 Peaks:\n');
-fprintf('Frequency (Hz): %.2f\tMagnitude: %.2f\n', [Top_Peak_Frequencies; Top_Peak_Magnitudes]);
+% Display result
+% disp(['Similarity Score: ', num2str(similarityScore)]);

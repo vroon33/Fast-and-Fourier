@@ -85,7 +85,7 @@ function noise_estimate = estimate_noise(noise_segment, frame_length, frame_shif
     % Process each frame
     for i = 1:num_frames
         start_idx = (i-1) * frame_shift + 1;
-        frame = noise_segment(start_idx:start_idx + frame_length - 1);
+        frame = noise_segment(start_idx : start_idx + frame_length - 1);
         
         % Window and FFT
         windowed_frame = frame .* window;
