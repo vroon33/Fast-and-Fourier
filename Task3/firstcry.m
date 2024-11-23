@@ -117,10 +117,10 @@ function plotsig(audio, fs)
     grid on;
 end
 
-[audio, fs] = audioread('7.mp3'); 
-% stereoToMono(audio, fs);
-sound(audio, fs);
-[words, startTimes, endTimes, isLouder] = readTimeFile('7.txt');
+[audio, fs] = audioread('9.mp3'); 
+stereoToMono(audio, fs);
+% sound(audio, fs);
+[words, startTimes, endTimes, isLouder] = readTimeFile('9.txt');
 
 % filteredAudio = applyBandpassFilter(audio, fs);
     % Apply low-pass filter below 100 Hz
@@ -128,21 +128,21 @@ sound(audio, fs);
   Fn = fs/2;  % Nyquist frequency
 
   % Low-pass filter
-  lpFilt = designfilt('lowpassiir', ...
-      'FilterOrder', 8, ...
-      'PassbandFrequency', 5000/Fn, ...    % Normalize by dividing by Fn
-      'PassbandRipple', 0.01);
+%   lpFilt = designfilt('lowpassiir', ...
+%       'FilterOrder', 8, ...
+%       'PassbandFrequency', 5000/Fn, ...    % Normalize by dividing by Fn
+%       'PassbandRipple', 0.01);
   
   % High-pass filter
-  hpFilt = designfilt('highpassiir', ...
-      'FilterOrder', 8, ...
-      'PassbandFrequency', 200 /Fn, ...   % Normalize by dividing by Fn
-      'PassbandRipple', 0.01);
+%   hpFilt = designfilt('highpassiir', ...
+%       'FilterOrder', 8, ...
+%       'PassbandFrequency', 200 /Fn, ...   % Normalize by dividing by Fn
+%       'PassbandRipple', 0.01);
   
   % Apply filters
     filteredAudio = noisefilter(audio,fs);
-    pause(1);
-    sound(filteredAudio, fs);
+    % pause(3);
+    % sound(filteredAudio, fs);
     % figure;
     % plotsig(filteredAudio, fs);
     % title('Filtered Audio Signal');
@@ -157,32 +157,29 @@ sound(audio, fs);
     % pause(length(highPassedAudio)/fs + 1);  % Wait for the audio to finish
 
     % Plot the low-passed audio signal
-    figure;
-    subplot(2, 1, 1);
-    plotsig(audio, fs);
-    title('Original Audio Signal');
+    % figure;
+    % subplot(2, 1, 1);
+    % plotsig(audio, fs);
+    % title('Original Audio Signal');
 
-    % Plot the high-passed audio signal
-    subplot(2, 1, 2);
-    plotsig(filteredAudio, fs);
-    title('Filtered Audio Signal');
-    % plotsig(highPassedAudio, fs);
-    % title('High-passed Audio Signal');
-    % Play the filtered audio signal
-    % sound(filteredAudio, fs);
+    % % Plot the high-passed audio signal
+    % subplot(2, 1, 2);
+    % plotsig(filteredAudio, fs);
+    % title('Filtered Audio Signal');
     
-    figure;
-    subplot(2, 1, 1);
-    plotfft(audio, fs);
-    % Plot the spectrogram
-    subplot(2, 1, 2);
-    plotfft(filteredAudio, fs);
+    % figure;
+    % subplot(2, 1, 1);
+    % plotfft(audio, fs);
+    % subplot(2, 1, 2);
+    % plotfft(filteredAudio, fs);
 
     % Print to verify the data
     for i = 1:length(words)
         fprintf('%s\t\t%f\t%f\t%d\n', words{i}, startTimes(i), endTimes(i), isLouder(i));
     end
     fprintf('\n');
+
+    audio = filteredAudio;
 
 % Process each word
 for i = 1:length(words)
@@ -195,14 +192,14 @@ for i = 1:length(words)
     duration = endTimes(i) - startTimes(i);
     
     % Calculate RMS energy
-    energy = sqrt(mean(wordSegment.^2));
+    energy = sum(wordSegment.^2);
     peakAmplitude = max(abs(wordSegment));
     normalizedEnergy = energy / duration;
     % Perform STFT
     [S, F, T] = stft(wordSegment, fs, 'Window', hamming(256), 'OverlapLength', 128, 'FFTLength', 512);
 
     % Calculate energy in the frequency band of interest (500 Hz to 4 kHz)
-    freqBand = (F >= 90 & F <=500);
+    freqBand = (F >= 100);
     bandEnergy = sum(abs(S(freqBand, :)).^2, 'all');
 
     normalizedBandEnergy = bandEnergy / duration;
@@ -210,10 +207,14 @@ for i = 1:length(words)
 
     % Determine if loud (you may need to adjust threshold)
     threshold = 0.12;  % Adjust based on your audio
-    isLoud = energy > threshold;
+    if(peakAmplitude > 0.6)
+        isLoud = 1;
+    else
+        isLoud = energy > threshold;
+    end
     
     % Print result
-    % fprintf('Word: %s \t Peak Amplitude: %.4f \t Energy: %.4f \t normalisedEnergy: %.4f \t Band_Energy: %.4f \t normalisedBand_Energy: %.4f \t Is Loud: %d\n', words{i}, peakAmplitude, energy, normalizedEnergy, bandEnergy, normalizedBandEnergy, isLoud);
+    fprintf('Word: %s \t Peak Amplitude: %.4f \t Energy: %.4f \t normalisedEnergy: %.4f \t Band_Energy: %.4f \t normalisedBand_Energy: %.4f \t Is Loud: %d\n', words{i}, peakAmplitude, energy, normalizedEnergy, bandEnergy, normalizedBandEnergy, isLoud);
 end
 
 % The above code gives the audio characteristics like peak amplitude, energy, normalized energy, band energy, normalized band energy to determine if the word is loud or not.
