@@ -1,12 +1,12 @@
 % Read the audio file
-[y, Fs] = audioread('./Fast-and-Fourier/Task1/bird3.wav');
+[y, Fs] = audioread('bird3.wav');
 
 y = noisefilter(y, Fs);
 sound(y, Fs);
 
 % Compute FFT
 N = length(y);
-fft_length = 2 * Fs;  % Match the FFT length
+fft_length = N;  % Match the FFT length
 Y = fft(y, fft_length)';
 Y_shifted = fftshift(Y);  % Center the FFT
 mag_spectrum = abs(Y_shifted);  % Get magnitude spectrum
