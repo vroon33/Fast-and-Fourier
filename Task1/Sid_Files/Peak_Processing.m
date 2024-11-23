@@ -1,0 +1,1 @@
+% MATLAB function to take an audio signal as input and return a vector of 10 highest frequencies and their magnitudes.

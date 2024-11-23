@@ -60,7 +60,7 @@ end
 
 function features = extractSpectrogramFeatures(y, Fs, windowLength, overlap, nfft)
     % Calculate spectrogram
-    hopSize = windowLength - overlap;
+    % hopSize = windowLength - overlap;
     [S, ~, ~] = spectrogram(y, hamming(windowLength), overlap, nfft, Fs);
     S = abs(S);  % Magnitude spectrogram
     
