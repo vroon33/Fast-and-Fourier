@@ -1,12 +1,6 @@
 function matchBirdSounds(taskFile, referenceFiles)
-    % Function to compare mono bird sounds and find the best match
-    % taskFile: path to the file to be matched
-    % referenceFiles: cell array of paths to reference bird sound files
-
-    % Parameters
-    chunkSeconds = 0.05;  % Chunk length in seconds
+    chunkSeconds = 0.05; % Chunk length in seconds
     
-    % Load task file
     [taskY, Fs] = audioread(taskFile);
     
     % Calculate spectrogram parameters
@@ -35,22 +29,23 @@ function matchBirdSounds(taskFile, referenceFiles)
         
         % Calculate similarity
         similarities(i) = calculateSimilarity2(taskFeatures, refFeatures);
-        
-        % Display individual similarity
-        % fprintf('Similarity with %s: %.2f%%\n', referenceFiles{i}, similarities(i) * 100);
-        % Display individual Seperation
-        fprintf('seperation with %s: %.2f%%\n', referenceFiles{i}, similarities(i));
     end
     
     % Find best match
-    % [maxSim, bestMatch] = max(similarities);
-    [maxSim, bestMatch] = min(similarities);
-    % fprintf('\nBest match is %s with %.2f%% similarity\n', ...
-    %     referenceFiles{bestMatch}, maxSim * 100);
-        fprintf('\nBest match is %s with %.2f%% distance\n', ...
-        referenceFiles{bestMatch}, maxSim);
+    fprintf('Distance from Bird1: %.2f\n', similarities(1));
+    fprintf('Distance from Bird2: %.2f\n', similarities(2));
+    % fprintf('Distance from Bird3: %.2f\n', similarities(3));
+    % fprintf('Distance from Bird1_1: %.2f\n', similarities(4));
+    % fprintf('Distance from Bird2_1: %.2f\n', similarities(5));
+    % fprintf('Distance from Bird3_1: %.2f\n', similarities(6));
+    % fprintf('Distance from Bird1_2: %.2f\n', similarities(7));
+    % fprintf('Distance from Bird2_2: %.2f\n', similarities(8));
+    % fprintf('Distance from Bird3_2: %.2f\n', similarities(9));
     
-    % Optional: Plot spectrograms side by side
+    [maxSim, bestMatch] = min(similarities);
+    fprintf('\nBest match is %s with %.2f distance\n', referenceFiles{bestMatch}, maxSim);
+    
+    %Plot spectrograms side by side
     plotComparison(taskY, audioread(referenceFiles{bestMatch}), Fs, windowLength, overlap, nfft);
 end
 
@@ -69,18 +64,18 @@ function features = extractSpectrogramFeatures(y, Fs, windowLength, overlap, nff
     features.spectralCentroid = calculateSpectralCentroid(S, Fs, nfft);
 end
 
+function centroid = calculateSpectralCentroid(S, Fs, nfft)
+    freqBins = floor(nfft / 2) + 1;
+    frequencies = (0:freqBins-1) * Fs / nfft;
+    centroid = sum(frequencies' .* S, 1) ./ sum(S, 1);
+end
+
 % Use the findpeaks function instead for this function
 function dominantFreqs = getDominantFrequencies(S, Fs, nfft)
     [~, maxFreqIndices] = max(S, [], 1);
     freqBins = floor(nfft / 2) + 1;
     f = (0:freqBins-1) * Fs / nfft;
     dominantFreqs = f(maxFreqIndices);
-end
-
-function centroid = calculateSpectralCentroid(S, Fs, nfft)
-    freqBins = floor(nfft / 2) + 1;
-    frequencies = (0:freqBins-1) * Fs / nfft;
-    centroid = sum(frequencies' .* S, 1) ./ sum(S, 1);
 end
 
 % Removed Spectral Centroid comparison
@@ -94,67 +89,63 @@ function similarity = calculateSimilarity2(feat1, feat2)
     energySim = compareEnergyProfiles2(feat1.energyProfile, feat2.energyProfile);
     
     % 3. Compare spectral centroids
-    % centroidSim = compareSpectralCentroids(feat1.spectralCentroid, feat2.spectralCentroid);
+    centroidSim = compareSpectralCentroids(feat1.spectralCentroid, feat2.spectralCentroid);
     
     % Weighted combination of similarities
-    weights = [0.5, 0.5];  % Adjust weights as needed
-    similarity = weights(1)*freqSim + weights(2)*energySim;
-end
-
-% Since I have removed the threshold, commenting out the first two lines
-function sim = compareDominantFreqs(freq1, freq2)
-    % freq1 = freq1(~isnan(freq1));
-    % freq2 = freq2(~isnan(freq2));
-    
-    len = min(length(freq1), length(freq2));
-    if len > 1
-        freq1 = interp1(1:length(freq1), freq1, linspace(1, length(freq1), len), 'linear', 'extrap');
-        freq2 = interp1(1:length(freq2), freq2, linspace(1, length(freq2), len), 'linear', 'extrap');
-    end
-    
-    diff = abs(freq1 - freq2);
-    sim = 1 - mean(diff) / max([freq1(:); freq2(:)]);
-end
-
-function sim = compareDominantFreqs2(freq1, freq2)
-    % Remove NaN values
-    % freq1 = freq1(~isnan(freq1));
-    % freq2 = freq2(~isnan(freq2));
-    
-    % Compute DTW distance
-    [dist, ~, ~] = dtw(freq1, freq2);
-    
-    % Normalize to similarity score (0 to 1)
-    % maxFreq = max([freq1(:); freq2(:)]);
-    sim = dist;
-    
-    % Ensure similarity is in [0,1] range
-    % sim = max(0, min(1, sim));
-end
-
-function sim = compareEnergyProfiles(energy1, energy2)
-    len = min(length(energy1), length(energy2));
-    energy1 = interp1(1:length(energy1), energy1, linspace(1, length(energy1), len), 'linear', 'extrap');
-    energy2 = interp1(1:length(energy2), energy2, linspace(1, length(energy2), len), 'linear', 'extrap');
-    
-    energy1 = energy1 / max(energy1);
-    energy2 = energy2 / max(energy2);
-    
-    sim = max(xcorr(energy1, energy2, 'normalized'));
-end
-
-function sim = compareEnergyProfiles2(energy1, energy2)
-    [dist, ~, ~] = dtw(energy1, energy2);
-    sim = dist;
+    weights = [0.00001, 1, 0.00001];  % Adjust weights as needed
+    similarity = weights(1)*freqSim + weights(2)*energySim + weights(3)*centroidSim;
 end
 
 function sim = compareSpectralCentroids(centroid1, centroid2)
-    len = min(length(centroid1), length(centroid2));
-    centroid1 = interp1(1:length(centroid1), centroid1, linspace(1, length(centroid1), len), 'linear', 'extrap');
-    centroid2 = interp1(1:length(centroid2), centroid2, linspace(1, length(centroid2), len), 'linear', 'extrap');
-    
-    diff = abs(centroid1 - centroid2);
-    sim = 1 - mean(diff) / max([centroid1(:); centroid2(:)]);
+    [dist, ix, iy] = dtw(centroid1, centroid2);
+
+    % figure;
+    % subplot(2,1,1);
+    % plot(centroid1); hold on; plot(centroid2);
+    % title('Original Sequences');
+    % legend('Sequence 1', 'Sequence 2');
+    % 
+    % subplot(2,1,2);
+    % plot(1:length(ix), centroid1(ix), 'b', 1:length(iy), centroid2(iy), 'r');
+    % title('DTW Aligned Sequences');
+    % legend('Aligned Sequence 1', 'Aligned Sequence 2');
+
+    sim = dist;
+end
+
+function sim = compareDominantFreqs2(freq1, freq2)
+    % Compute DTW distance
+    [dist, ix, iy] = dtw(freq1, freq2);
+
+    % figure;
+    % subplot(2,1,1);
+    % plot(freq1); hold on; plot(freq2);
+    % title('Original Sequences');
+    % legend('Sequence 1', 'Sequence 2');
+
+    % subplot(2,1,2);
+    % plot(1:length(ix), freq1(ix), 'b', 1:length(iy), freq2(iy), 'r');
+    % title('DTW Aligned Sequences');
+    % legend('Aligned Sequence 1', 'Aligned Sequence 2');
+
+    sim = dist;
+end
+
+function sim = compareEnergyProfiles2(energy1, energy2)
+    [dist, ix, iy] = dtw(energy1, energy2, "squared");
+
+    % figure;
+    % subplot(2,1,1);
+    % plot(energy1); hold on; plot(energy2);
+    % title('Original Sequences');
+    % legend('Sequence 1', 'Sequence 2');
+
+    % subplot(2,1,2);
+    % plot(1:length(ix), energy1(ix), 'b', 1:length(iy), energy2(iy), 'r');
+    % title('DTW Aligned Sequences');
+    % legend('Aligned Sequence 1', 'Aligned Sequence 2');
+
+    sim = dist;
 end
 
 function plotComparison(y1, y2, Fs, windowLength, overlap, nfft)
@@ -173,7 +164,8 @@ end
 
 % Define your files
 taskFile = 'F4.wav';
-referenceFiles = {'bird1.wav', 'bird2.wav', 'bird3.wav'};
+% referenceFiles = {'bird1.wav', 'bird2.wav', 'bird3.wav', 'bird1_1.wav', 'bird2_1.wav', 'bird3_1.wav', 'bird1_2.wav', 'bird2_2.wav', 'bird3_2.wav'};
+referenceFiles = {'bird1.wav', 'bird3_3.wav'};
 
 % Run the matching
 matchBirdSounds(taskFile, referenceFiles);

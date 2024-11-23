@@ -1,6 +1,9 @@
 % Read the audio file
 [y, Fs] = audioread('bird1.wav');
 
+y = noisefilter(y, Fs);
+sound(y, Fs);
+
 % Convert stereo to mono if necessary
 if size(y, 2) > 1
     y = mean(y, 2);

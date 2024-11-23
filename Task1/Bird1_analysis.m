@@ -3,7 +3,6 @@
 
 % y = y(0.95*Fs : 2.5*Fs);
 % Compute FFT
-y = [y zeros(1, 2^nextpow2(length(y)) - length(y))];
 N = length(y);
 Y = fft(y);
 Y_shifted = fftshift(Y);
