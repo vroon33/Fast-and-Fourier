@@ -46,11 +46,6 @@ function stereoToMono(audio, Fs)
     if size(audio, 2) > 1
         audio = mean(audio, 2);
     end
-
-    % Error checking for window size
-    % if windowLength > length(audio)
-    %     error('Chunk length is too large for the signal');
-    % end
 end
 
 function plotspec(audio, Fs)
