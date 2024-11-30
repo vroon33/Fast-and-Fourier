@@ -1,10 +1,10 @@
 % Bird Matcher
 
-clc, clearvars;
+clc, clearvars, close all;
 
 ref_files = {'bird1.wav', 'bird2.wav', 'bird3.wav'};
 
-task_file = 'bird3.wav'; % Change the Test file here
+task_file = 'F1.wav'; % Change the Test file here
 
 [task_audio, task_fs] = audioread(task_file);
 % task_audio = flip(task_audio);

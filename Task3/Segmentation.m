@@ -50,7 +50,7 @@ function [wordTimestamps] = detectWordTimestamps(audioFilePath)
     energy = energyPlot(audioSignal, sampleRate);
 
     % Threshold for voice activity (adjust as needed)
-    energyThreshold = 0.5;
+    energyThreshold = 0.25;
     
     % Detect speech regions
     isSpeech = energy > energyThreshold;
@@ -62,12 +62,12 @@ function [wordTimestamps] = detectWordTimestamps(audioFilePath)
     % Convert sample indices to timestamps
     wordTimestamps = [];
     for i = 1:length(speechOnsets)
-        onsetTime = (speechOnsets(i)) / sampleRate;
-        offsetTime = (speechOffsets(i)) / sampleRate;
+        onsetTime = speechOnsets(i) * 0.01;
+        offsetTime = speechOffsets(i) * 0.01;
         
         % Optional: Apply additional filtering for short/long segments
         segmentDuration = offsetTime - onsetTime;
-        if segmentDuration > 0.01 && segmentDuration < 4.0
+        if segmentDuration > 0.1 && segmentDuration < 4.0
             wordTimestamps(end+1, 1:2) = [onsetTime, offsetTime];
         end
     end
