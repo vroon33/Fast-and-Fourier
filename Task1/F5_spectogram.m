@@ -19,7 +19,7 @@ end
 
 % Create spectrogram using built-in function
 figure;
-spectrogram(y, hamming(windowLength), overlap, nfft, Fs, 'yaxis');
+spectrogram(y, rectwin(windowLength), overlap, nfft, Fs, 'yaxis');
 colormap('jet');
 colorbar;
 
