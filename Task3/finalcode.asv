@@ -118,8 +118,8 @@ function filteredAudio = filter(audio,fs)
     sound(filteredAudio, fs);
 end
 
-[audio, fs] = audioread('3.wav'); 
-[words, startTimes, endTimes, isLouder] = readTimeFile('3.txt');
+[audio, fs] = audioread('6.wav'); 
+[words, startTimes, endTimes, isLouder] = readTimeFile('6.txt');
 
 stereoToMono(audio, fs);
 
@@ -144,6 +144,8 @@ filteredAudio = noisefilter(audio,fs);
 % plotfft(filteredAudio, fs);
 
 audio = filteredAudio;
+
+loudness = acoustic
 
 % Process each word
 for i = 1:length(words)
@@ -179,11 +181,9 @@ for i = 1:length(words)
     else
         isLoud = energy > threshold;
     end
-
-    loudness = acousticLoudness(wordSegment, fs);
     
     % Print result
-    fprintf('Word: %s \t Peak Amplitude: %.4f \t Energy: %.4f \t normalisedEnergy: %.4f \t Band_Energy: %.4f \t normalisedBand_Energy: %.4f \t Is Loud: %.2f\n', words{i}, peakAmplitude, energy, normalizedEnergy, bandEnergy, normalizedBandEnergy, loudness);
+    fprintf('Word: %s \t Peak Amplitude: %.4f \t Energy: %.4f \t normalisedEnergy: %.4f \t Band_Energy: %.4f \t normalisedBand_Energy: %.4f \t Is Loud: x\n', words{i}, peakAmplitude, energy, normalizedEnergy, bandEnergy, normalizedBandEnergy);
 end
 
 % The above code gives the audio characteristics like peak amplitude, energy, normalized energy, band energy, normalized band energy to determine if the word is loud or not.

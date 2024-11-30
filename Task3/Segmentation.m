@@ -12,7 +12,7 @@ function [wordTimestamps] = detectWordTimestamps(audioFilePath)
     end
     
     % Normalize the audio signal
-    audioSignal = audioSignal / max(abs(audioSignal));
+    % audioSignal = audioSignal / max(abs(audioSignal));
     
     % Energy-based Voice Activity Detection (VAD)
     windowSize = round(0.025 * sampleRate);  % 25 ms window
@@ -27,10 +27,10 @@ function [wordTimestamps] = detectWordTimestamps(audioFilePath)
     end
     
     % Normalize energy
-    energy = (energy - min(energy)) / (max(energy) - min(energy));
+    % energy = (energy - min(energy)) / (max(energy) - min(energy));
     
     % Threshold for voice activity (adjust as needed)
-    energyThreshold = 0.001;
+    energyThreshold = 0.01;
     
     % Detect speech regions
     isSpeech = energy > energyThreshold;
@@ -47,7 +47,7 @@ function [wordTimestamps] = detectWordTimestamps(audioFilePath)
         
         % Optional: Apply additional filtering for short/long segments
         segmentDuration = offsetTime - onsetTime;
-        if segmentDuration > 0.1 && segmentDuration < 2.0
+        if segmentDuration > 0.1 && segmentDuration < 4.0
             wordTimestamps(end+1, 1:2) = [onsetTime, offsetTime];
         end
     end
@@ -69,7 +69,7 @@ function [wordTimestamps] = detectWordTimestamps(audioFilePath)
 end
 
 % Example usage
-audioFilePath = '1.wav';
+audioFilePath = '2.wav';
 timestamps = detectWordTimestamps(audioFilePath);
 disp('Word Timestamps:');
 disp(timestamps);
