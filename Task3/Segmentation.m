@@ -1,3 +1,39 @@
+function energyOverTime = energyPlot(audio, fs)
+    % Window size (adjust as needed)
+    windowSize = round(0.01 * fs);  % 10 ms window
+    
+    % Overlap between windows
+    % overlap = round(windowSize / 2);
+    overlap = 0;
+    
+    % Initialize energy array
+    energyOverTime = zeros(1, ceil(length(audio) / (windowSize - overlap)));
+    
+    % Calculate energy for each window
+    for i = 1:length(energyOverTime)
+        % Calculate start and end of current window
+        startIdx = 1 + (i-1) * (windowSize - overlap);
+        endIdx = min(startIdx + windowSize - 1, length(audio));
+        
+        % Extract window
+        window = audio(startIdx:endIdx);
+        
+        % Calculate instantaneous energy (squared amplitude)
+        energyOverTime(i) = sum(window.^2);
+    end
+    
+    % Create time axis
+    timeAxis = ((0:length(energyOverTime)-1) * (windowSize - overlap)) / fs;
+    
+    % Plot energy over time
+    figure;
+    plot(timeAxis, energyOverTime);
+    title('Energy vs Time');
+    xlabel('Time (seconds)');
+    ylabel('Energy (Squared Amplitude)');
+    grid on;
+end
+
 function [wordTimestamps] = detectWordTimestamps(audioFilePath)
     % Word Timestamp Detection in Audio Signal
     % Input: Path to audio file
@@ -10,27 +46,11 @@ function [wordTimestamps] = detectWordTimestamps(audioFilePath)
     if size(audioSignal, 2) > 1
         audioSignal = mean(audioSignal, 2);
     end
-    
-    % Normalize the audio signal
-    % audioSignal = audioSignal / max(abs(audioSignal));
-    
-    % Energy-based Voice Activity Detection (VAD)
-    windowSize = round(0.025 * sampleRate);  % 25 ms window
-    hopLength = round(0.01 * sampleRate);    % 10 ms hop
-    
-    % Calculate short-time energy
-    energy = zeros(1, floor((length(audioSignal) - windowSize) / hopLength) + 1);
-    for i = 1:length(energy)
-        startIdx = 1 + (i-1) * hopLength;
-        endIdx = startIdx + windowSize - 1;
-        energy(i) = sum(audioSignal(startIdx:endIdx).^2);
-    end
-    
-    % Normalize energy
-    % energy = (energy - min(energy)) / (max(energy) - min(energy));
-    
+
+    energy = energyPlot(audioSignal, sampleRate);
+
     % Threshold for voice activity (adjust as needed)
-    energyThreshold = 0.01;
+    energyThreshold = 0.5;
     
     % Detect speech regions
     isSpeech = energy > energyThreshold;
@@ -42,30 +62,15 @@ function [wordTimestamps] = detectWordTimestamps(audioFilePath)
     % Convert sample indices to timestamps
     wordTimestamps = [];
     for i = 1:length(speechOnsets)
-        onsetTime = (speechOnsets(i) * hopLength) / sampleRate;
-        offsetTime = (speechOffsets(i) * hopLength) / sampleRate;
+        onsetTime = (speechOnsets(i)) / sampleRate;
+        offsetTime = (speechOffsets(i)) / sampleRate;
         
         % Optional: Apply additional filtering for short/long segments
         segmentDuration = offsetTime - onsetTime;
-        if segmentDuration > 0.1 && segmentDuration < 4.0
+        if segmentDuration > 0.01 && segmentDuration < 4.0
             wordTimestamps(end+1, 1:2) = [onsetTime, offsetTime];
         end
     end
-     
-    % Optional: Additional refinement using spectral subtraction
-    % This is a basic implementation and might need tuning
-    function refinedTimestamps = refineTimestamps(timestamps, audioSignal, sampleRate)
-        refinedTimestamps = timestamps;
-        
-        % You could add more sophisticated word boundary detection here
-        % Examples:
-        % - Zero-crossing rate analysis
-        % - Spectral flux
-        % - More advanced silence detection
-    end
-    
-    % Optional post-processing
-    wordTimestamps = refineTimestamps(wordTimestamps, audioSignal, sampleRate);
 end
 
 % Example usage
