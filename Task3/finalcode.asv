@@ -118,42 +118,6 @@ function filteredAudio = filter(audio,fs)
     sound(filteredAudio, fs);
 end
 
-function energyPlot(audio, fs)
-    % Window size (adjust as needed)
-    windowSize = round(0.01 * fs);  % 10 ms window
-    
-    % Overlap between windows
-    % overlap = round(windowSize / 2);
-    overlap = 0;
-    
-    % Initialize energy array
-    energyOverTime = zeros(1, ceil(length(audio) / (windowSize - overlap)));
-    
-    % Calculate energy for each window
-    for i = 1:length(energyOverTime)
-        % Calculate start and end of current window
-        startIdx = 1 + (i-1) * (windowSize - overlap);
-        endIdx = min(startIdx + windowSize - 1, length(audio));
-        
-        % Extract window
-        window = audio(startIdx:endIdx);
-        
-        % Calculate instantaneous energy (squared amplitude)
-        energyOverTime(i) = sum(window.^2);
-    end
-    
-    % Create time axis
-    timeAxis = ((0:length(energyOverTime)-1) * (windowSize - overlap)) / fs;
-    
-    % Plot energy over time
-    figure;
-    plot(timeAxis, energyOverTime);
-    title('Energy vs Time');
-    xlabel('Time (seconds)');
-    ylabel('Energy (Squared Amplitude)');
-    grid on;
-end
-
 [audio, fs] = audioread('6.wav'); 
 [words, startTimes, endTimes, isLouder] = readTimeFile('6.txt');
 
@@ -162,7 +126,6 @@ stereoToMono(audio, fs);
 % Apply filters
 filteredAudio = noisefilter(audio,fs);
 
-energyPlot(filteredAudio, fs);
 % % Plot the original audio signal
 % figure;
 % subplot(2, 1, 1);
@@ -182,8 +145,7 @@ energyPlot(filteredAudio, fs);
 
 audio = filteredAudio;
 
-% loudness = acousticLoudness(audio,fs)
-% loudness
+loudness = acoustic
 
 % Process each word
 for i = 1:length(words)
@@ -199,7 +161,6 @@ for i = 1:length(words)
     energy = sum(wordSegment.^2);
     peakAmplitude = max(abs(wordSegment));
     normalizedEnergy = energy / duration;
-
     % Perform STFT
     [S, F, T] = stft(wordSegment, fs, 'Window', hamming(256), 'OverlapLength', 128, 'FFTLength', 512);
 
@@ -220,11 +181,9 @@ for i = 1:length(words)
     else
         isLoud = energy > threshold;
     end
-
-    loudness = acousticLoudness(wordSegment, fs);
     
     % Print result
-    fprintf('Word: %s \t Peak Amplitude: %.4f \t Energy: %.4f \t normalisedEnergy: %.4f \t Band_Energy: %.4f \t normalisedBand_Energy: %.4f \t Is Loud: %.2f\n', words{i}, peakAmplitude, energy, normalizedEnergy, bandEnergy, normalizedBandEnergy, loudness);
+    fprintf('Word: %s \t Peak Amplitude: %.4f \t Energy: %.4f \t normalisedEnergy: %.4f \t Band_Energy: %.4f \t normalisedBand_Energy: %.4f \t Is Loud: x\n', words{i}, peakAmplitude, energy, normalizedEnergy, bandEnergy, normalizedBandEnergy);
 end
 
 % The above code gives the audio characteristics like peak amplitude, energy, normalized energy, band energy, normalized band energy to determine if the word is loud or not.
