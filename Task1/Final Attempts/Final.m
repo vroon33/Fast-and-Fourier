@@ -93,7 +93,6 @@ best_match = ref_files{best_idx};
 % fprintf('\nBird 1 Match : %.4f', combined_scores(1));
 % fprintf('\nBird 2 Match : %.4f', combined_scores(2));
 % fprintf('\nBird 3 Match : %.4f\n', combined_scores(3));
-% fprintf('\nBest match : %s with score %.4f\n', best_match, best_score);
 fprintf('\nBest match : %s ', best_match);
 
 % Plot the spectrograms of the task file and best match using subplot
@@ -116,8 +115,6 @@ title('Task Audio Spectrogram');
 xlabel('Time (s)');
 ylabel('Frequency (kHz)');
 colorbar;
-
-% Helper functions
 
 function [dominant_freqs, dominant_order] = find_dominant_frequencies(spectrogram, frequencies, n)
     % Returns a vector of the dominant frequencies and their indices in the frequencies array
