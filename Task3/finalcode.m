@@ -118,14 +118,51 @@ function filteredAudio = filter(audio,fs)
     sound(filteredAudio, fs);
 end
 
-[audio, fs] = audioread('9.mp3'); 
-[words, startTimes, endTimes, isLouder] = readTimeFile('9.txt');
+function energyPlot(audio, fs)
+    % Window size (adjust as needed)
+    windowSize = round(0.01 * fs);  % 10 ms window
+    
+    % Overlap between windows
+    % overlap = round(windowSize / 2);
+    overlap = 0;
+    
+    % Initialize energy array
+    energyOverTime = zeros(1, ceil(length(audio) / (windowSize - overlap)));
+    
+    % Calculate energy for each window
+    for i = 1:length(energyOverTime)
+        % Calculate start and end of current window
+        startIdx = 1 + (i-1) * (windowSize - overlap);
+        endIdx = min(startIdx + windowSize - 1, length(audio));
+        
+        % Extract window
+        window = audio(startIdx:endIdx);
+        
+        % Calculate instantaneous energy (squared amplitude)
+        energyOverTime(i) = sum(window.^2);
+    end
+    
+    % Create time axis
+    timeAxis = ((0:length(energyOverTime)-1) * (windowSize - overlap)) / fs;
+    
+    % Plot energy over time
+    figure;
+    plot(timeAxis, energyOverTime);
+    title('Energy vs Time');
+    xlabel('Time (seconds)');
+    ylabel('Energy (Squared Amplitude)');
+    grid on;
+end
+
+[audio, fs] = audioread('6.wav'); 
+[words, startTimes, endTimes, isLouder] = readTimeFile('6.txt');
 
 stereoToMono(audio, fs);
 
 % Apply filters
 filteredAudio = noisefilter(audio,fs);
 
+energyPlot(filteredAudio, fs);
 % % Plot the original audio signal
 % figure;
 % subplot(2, 1, 1);
@@ -145,6 +182,9 @@ filteredAudio = noisefilter(audio,fs);
 
 audio = filteredAudio;
 
+% loudness = acousticLoudness(audio,fs)
+% loudness
+
 % Process each word
 for i = 1:length(words)
     % Convert time to samples
@@ -159,6 +199,7 @@ for i = 1:length(words)
     energy = sum(wordSegment.^2);
     peakAmplitude = max(abs(wordSegment));
     normalizedEnergy = energy / duration;
+
     % Perform STFT
     [S, F, T] = stft(wordSegment, fs, 'Window', hamming(256), 'OverlapLength', 128, 'FFTLength', 512);
 
