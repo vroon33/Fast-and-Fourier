@@ -1,7 +1,7 @@
 % Read the audio file
 [y, Fs] = audioread('bird1.wav');
 
-y = noisefilter(y, Fs);
+% y = noisefilter(y, Fs);
 sound(y, Fs);
 
 % Compute FFT

@@ -1,4 +1,4 @@
-function [words, startTimes, endTimes, isLouder] = readtimeFile(filename)
+function [words, startTimes, endTimes, isLouder] = readTimeFile(filename)
     % Read the entire file as a string
     fileContent = fileread(filename);
     
@@ -26,9 +26,8 @@ function [words, startTimes, endTimes, isLouder] = readtimeFile(filename)
     end
     
     % Display parsed data to verify
-    % fprintf('Parsed Data:\n');
-    % for i = 1:numWords
-    %     fprintf('Word: %s\tStart: %.6f\tEnd: %.6f\tLouder: %d\n', ...
-    %             words{i}, startTimes(i), endTimes(i), isLouder(i));
-    % end
+    for i = 1:length(words)
+        fprintf('%s\t\t%f\t%f\t%d\n', words{i}, startTimes(i), endTimes(i), isLouder(i));
+    end
+    fprintf('\n');
 end
