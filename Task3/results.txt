@@ -1,13 +1,22 @@
+AUDIO - 1
 wow             0.475139        1.093177        1
 i               1.093177        1.295022        0
 won             1.295022        1.551347        0
 it              1.551347        1.972006        0
-
 Word: wow        Peak Amplitude: 1.0000          Energy: 1148.6062       normalisedEnergy: 1858.4718     Band_Energy: 232984.5832        normalisedBand_Energy: 376974.5278      Is Loud: x
 Word: i          Peak Amplitude: 0.2081          Energy: 40.2940         normalisedEnergy: 199.6282      Band_Energy: 7869.7950          normalisedBand_Energy: 38989.2988       Is Loud: x
 Word: won        Peak Amplitude: 0.4399          Energy: 109.9361        normalisedEnergy: 428.8935      Band_Energy: 21119.0018         normalisedBand_Energy: 82391.5020       Is Loud: x
 Word: it         Peak Amplitude: 0.2498          Energy: 32.0347         normalisedEnergy: 76.1536       Band_Energy: 6433.6482          normalisedBand_Energy: 15294.2128       Is Loud: x
 
+
+Mean Energy: 332.21775
+Mean Peak Amplitude: 0.47445
+Mean normalisedEnergy: 640.286775
+Mean normalisedBand_Energy: 128162.88535
+Condition 1 valid
+Condition 2 valid
+
+AUDIO - 2
 he              0.502840        0.726325        0
 always          0.726325        1.471274        1
 manages         1.555081        2.163455        0
@@ -26,6 +35,14 @@ Word: the        Peak Amplitude: 0.4716          Energy: 91.9539         normali
 Word: best       Peak Amplitude: 1.0000          Energy: 821.4912        normalisedEnergy: 1603.9989     Band_Energy: 155737.6554        normalisedBand_Energy: 304084.8330      Is Loud: x
 Word: deals      Peak Amplitude: 0.3537          Energy: 52.6095         normalisedEnergy: 103.9829      Band_Energy: 4877.4970          normalisedBand_Energy: 9640.3890        Is Loud: x
 
+Mean Peak Amplitude: 0.61039
+Mean Energy: 413.0302
+Mean normalisedEnergy: 842.9939
+Mean normalisedBand_Energy: 153308.1937
+Condition 1 valid
+Condtion 2 valid
+
+AUDIO - 3
 i               0.452592        0.646911        0
 cant            0.646911        1.003572        1
 believe         1.003572        1.340556        0
@@ -46,6 +63,14 @@ Word: going      Peak Amplitude: 0.5446          Energy: 229.2846        normali
 Word: to         Peak Amplitude: 0.2258          Energy: 21.1581         normalisedEnergy: 85.1663       Band_Energy: 4154.6460          normalisedBand_Energy: 16723.4062       Is Loud: x
 Word: paros      Peak Amplitude: 0.9455          Energy: 946.3823        normalisedEnergy: 1658.4025     Band_Energy: 190704.0243        normalisedBand_Energy: 334182.1023      Is Loud: x
 
+Mean Peak Amplitude: 0.61716
+Mean Energy: 445.7582
+Mean normalisedEnergy: 1154.04508
+Mean normalisedBand_Energy: 229073.0295
+Condition 1 valid
+Condition 2 Fails
+
+AUDIO - 4
 i               0.505534        0.724802        0
 cant            0.770483        1.269927        1
 believe         1.269927        1.839414        0
@@ -63,16 +88,25 @@ Word: we         Peak Amplitude: 0.1928          Energy: 17.5954         normali
 Word: are        Peak Amplitude: 0.3201          Energy: 67.2582         normalisedEnergy: 345.0822      Band_Energy: 13267.9192         normalisedBand_Energy: 68073.7752       Is Loud: x
 Word: actually   Peak Amplitude: 0.3693          Energy: 60.4387         normalisedEnergy: 100.2322      Band_Energy: 11653.0280         normalisedBand_Energy: 19325.5045       Is Loud: x
 Word: going      Peak Amplitude: 0.1971          Energy: 35.4882         normalisedEnergy: 128.0560      Band_Energy: 6884.5707          normalisedBand_Energy: 24842.3868       Is Loud: x
-Word: to         Peak Amplitude: 0.0881          Energy: 1.9583          normalisedEnergy: 10.5413       Band_Energy: 375.5248   normalisedBand_Energy: 2021.4611        Is Loud: x
+Word: to         Peak Amplitude: 0.0881          Energy: 1.9583          normalisedEnergy: 10.5413       Band_Energy: 375.5248           normalisedBand_Energy: 2021.4611       Is Loud: x
 Word: paris      Peak Amplitude: 0.9691          Energy: 892.1583        normalisedEnergy: 1350.0163     Band_Energy: 179353.7234        normalisedBand_Energy: 271398.5374      Is Loud: x
 
+
+Mean Peak Amplitude: 0.41568
+Mean Energy: 228.31605
+Mean normalisedEnergy: 452.7563
+Mean normalisedBand_Energy: 101012.5781
+Condition 1 valid
+Condition 2 valid
+Condition 4 valid
+
+AUDIO - 5
 i               0.513851        0.838009        0
 told            0.979678        1.366266        1
 you             1.366266        1.846501        0
 this            1.846501        2.105827        0
 would           2.105827        2.264305        0
 happen          2.264305        2.895813        0
-
 Word: i          Peak Amplitude: 0.3685          Energy: 65.6762         normalisedEnergy: 202.6055      Band_Energy: 12846.0933         normalisedBand_Energy: 39629.1108       Is Loud: x
 Word: told       Peak Amplitude: 1.0000          Energy: 1468.2749       normalisedEnergy: 3798.0354     Band_Energy: 297268.5230        normalisedBand_Energy: 768954.3468      Is Loud: x
 Word: you        Peak Amplitude: 0.2799          Energy: 74.1826         normalisedEnergy: 154.4714      Band_Energy: 14070.7111         normalisedBand_Energy: 29299.6368       Is Loud: x
@@ -80,6 +114,16 @@ Word: this       Peak Amplitude: 0.1491          Energy: 11.3421         normali
 Word: would      Peak Amplitude: 0.2507          Energy: 24.0899         normalisedEnergy: 152.0081      Band_Energy: 4776.6366          normalisedBand_Energy: 30140.6922       Is Loud: x
 Word: happen     Peak Amplitude: 0.2763          Energy: 32.7851         normalisedEnergy: 51.9156       Band_Energy: 6317.3111          normalisedBand_Energy: 10003.5331       Is Loud: x
 
+
+Mean Peak Amplitude: 0.38741
+Mean Energy: 279.05847
+Mean normalisedEnergy: 733.79545
+Mean normalisedBand_Energy: 148849.5631
+Condition 1 valid
+Condition 2 valid
+Condtion 4 valid
+
+AUDIO - 6
 i               0.457101        0.721523        0
 told            0.721523        1.004392        0
 you             1.004392        1.184773        0
@@ -94,6 +138,20 @@ Word: this       Peak Amplitude: 0.3732          Energy: 76.0315         normali
 Word: would      Peak Amplitude: 0.9665          Energy: 642.4591        normalisedEnergy: 2656.1726     Band_Energy: 131869.4144        normalisedBand_Energy: 545198.7993      Is Loud: x
 Word: happen     Peak Amplitude: 0.6568          Energy: 194.9706        normalisedEnergy: 338.4977      Band_Energy: 38706.6360         normalisedBand_Energy: 67200.4209       Is Loud: x
 
+
+Mean Peak Amplitude: 0.69908
+Mean Energy: 384.64647
+Mean normalisedEnergy: 1440.15479
+Mean normalisedBand_Energy: 286939.1035
+Condition 1 Fails (will give told more louder than would)
+Condition 2 Fails
+Condition 4 Fails 
+(All conditions give told as louder word)
+
+NOTE: uptill now, energy > 2*mean energy is working fine
+(energy > mean energy) is also working except second case
+
+AUDIO - 7
 i               0.449975        0.556333        0
 didnt           0.556333        0.744504        0
 say             0.744504        1.026761        0
@@ -101,7 +159,6 @@ he              1.186297        1.362197        1
 stole           1.362197        1.703768        0
 the             1.703768        1.818307        0
 money           1.818307        2.125108        0
-
 Word: i          Peak Amplitude: 0.2635          Energy: 10.3629         normalisedEnergy: 97.4342       Band_Energy: 1615.7689          normalisedBand_Energy: 15191.7948       Is Loud: x
 Word: didnt      Peak Amplitude: 0.9879          Energy: 758.7487        normalisedEnergy: 4032.2297     Band_Energy: 135640.5592        normalisedBand_Energy: 720836.6818      Is Loud: x
 Word: say        Peak Amplitude: 1.0000          Energy: 529.8706        normalisedEnergy: 1877.2629     Band_Energy: 92951.6713         normalisedBand_Energy: 329315.7347      Is Loud: x
@@ -110,6 +167,17 @@ Word: stole      Peak Amplitude: 0.8219          Energy: 737.7388        normali
 Word: the        Peak Amplitude: 0.3988          Energy: 41.8393         normalisedEnergy: 365.2846      Band_Energy: 7224.3113          normalisedBand_Energy: 63072.9381       Is Loud: x
 Word: money      Peak Amplitude: 0.3706          Energy: 86.0432         normalisedEnergy: 280.4529      Band_Energy: 14641.0474         normalisedBand_Energy: 47721.6416       Is Loud: x
 
+
+Mean Peak Amplitude: 0.67317
+Mean Energy: 408.4254
+Mean normalisedEnergy: 1824.4894
+Mean normalisedBand_Energy: 324869.1097
+Condition 1 Fails
+Condition 2 Fails
+Condtion 4 gives both he and didn't as loud
+Problem: "Didn't" is more louder than "He"
+
+AUDIO - 8
 i               0.458962        0.615380        1
 didnt           0.615380        0.965261        1
 say             0.965261        1.218411        0
@@ -126,6 +194,16 @@ Word: stole      Peak Amplitude: 0.4726          Energy: 98.8217         normali
 Word: the        Peak Amplitude: 0.4930          Energy: 62.3500         normalisedEnergy: 605.8929      Band_Energy: 9200.1849          normalisedBand_Energy: 89403.7752       Is Loud: x
 Word: money      Peak Amplitude: 0.4989          Energy: 87.7404         normalisedEnergy: 249.3051      Band_Energy: 15081.4697         normalisedBand_Energy: 42852.3887       Is Loud: x
 
+Mean Peak Amplitude: 0.56254
+Mean Energy: 175.9912
+Mean normalisedEnergy: 671.9364
+Mean normalisedBand_Energy: 119079.8577
+Condition 1 valid
+Condition 2 valid
+Condtion 4 Valid
+(Not Considering 'i' as louder word in all conditions)
+
+AUDIO - 9
 i               0.463641        0.555976        0
 didnt           0.555976        0.685638        0
 say             0.685638        0.919423        0
@@ -141,3 +219,23 @@ Word: he         Peak Amplitude: 0.4755          Energy: 77.2840         normali
 Word: stole      Peak Amplitude: 1.0000          Energy: 2521.9096       normalisedEnergy: 3595.7677     Band_Energy: 497351.6008        normalisedBand_Energy: 709129.6146      Is Loud: x
 Word: the        Peak Amplitude: 0.5977          Energy: 155.3104        normalisedEnergy: 1646.9822     Band_Energy: 28689.9460         normalisedBand_Energy: 304241.2090      Is Loud: x
 Word: money      Peak Amplitude: 0.7177          Energy: 106.6676        normalisedEnergy: 258.5498      Band_Energy: 19650.7820         normalisedBand_Energy: 47631.2159       Is Loud: x
+
+
+Mean Peak Amplitude: 0.63524
+Mean Energy: 468.837
+Mean normalisedEnergy: 1270.7485
+Mean normalisedBand_Energy: 236356.15454
+Condition 1 valid
+Condition 2 Valid
+Condition 4 Valid
+
+
+Conditions: 
+1) energy > 2*mean energy implies Is loud = 1
+2) normalisedBand_Energy > 2* mean normalisedBand_Energy implies Is loud = 1
+3) if Louder then peak amplitude > mean peak amplitude
+4) if normalisedenergy > 2* mean of normalised energy
+
+Conclusion: Audio 6 and 7 outputs are accoroding to the perception but actually the louder word is 'told' in audio 6 and 'didnt' in audio 7
+Apply the condition 3 first, if it fails then not louder
+if condition 3 true then apply condition 1 if it is true then the word is louder

@@ -1,5 +1,6 @@
 % Final Super Ultimate Promax Spectacular Code for Task 3a
 % Task 3a Completed!
+% ab to sahi mai complete ho gaya!
 clear all; close all;
 
 function stereoToMono(audio, Fs)
@@ -154,15 +155,15 @@ function energyPlot(audio, fs)
     grid on;
 end
 
-[audio, fs] = audioread('6.wav'); 
-[words, startTimes, endTimes, isLouder] = readTimeFile('6.txt');
+[audio, fs] = audioread('9.mp3'); 
+[words, startTimes, endTimes, isLouder] = readTimeFile('9.txt');
 
 stereoToMono(audio, fs);
 
 % Apply filters
-filteredAudio = noisefilter(audio,fs);
+% filteredAudio = noisefilter(audio,fs);
 
-energyPlot(filteredAudio, fs);
+% energyPlot(audio, fs);
 % % Plot the original audio signal
 % figure;
 % subplot(2, 1, 1);
@@ -180,55 +181,66 @@ energyPlot(filteredAudio, fs);
 % subplot(2, 1, 2);
 % plotfft(filteredAudio, fs);
 
-audio = filteredAudio;
+% audio = filteredAudio;
 
-% loudness = acousticLoudness(audio,fs)
-% loudness
+% Arrays to store metrics for each word
+peakAmplitudes = zeros(1, length(words));
+energies = zeros(1, length(words));
+normalizedEnergies = zeros(1, length(words));
+bandEnergies = zeros(1, length(words));
+normalizedBandEnergies = zeros(1, length(words));
 
-% Process each word
+% Process each word - first pass to collect metrics
 for i = 1:length(words)
-    % Convert time to samples
     startSample = round(startTimes(i) * fs);
     endSample = round(endTimes(i) * fs);
-    
-    % Extract word segment    
     wordSegment = audio(startSample:endSample);
     duration = endTimes(i) - startTimes(i);
     
-    % Calculate RMS energy
-    energy = sum(wordSegment.^2);
-    peakAmplitude = max(abs(wordSegment));
-    normalizedEnergy = energy / duration;
+    % Calculate metrics
+    energies(i) = sum(wordSegment.^2);
+    peakAmplitudes(i) = max(abs(wordSegment));
+    normalizedEnergies(i) = energies(i) / duration;
 
-    % Perform STFT
     [S, F, T] = stft(wordSegment, fs, 'Window', hamming(256), 'OverlapLength', 128, 'FFTLength', 512);
-
-    % Calculate energy in the frequency band of interest (500 Hz to 4 kHz)
     freqBand = (F >= 100 & F <= 7000);
-    bandEnergy = sum(abs(S(freqBand, :)).^2, 'all');
-
-    % want to hear the audio after removing the frequencies above 5k frequency
-    % remove the frequencies above 5k frequency
-
-    normalizedBandEnergy = bandEnergy / duration;
-    % NOTE: 'bandEnergy' is the energy in the frequency domain but the 'energy' is in time domain.
-
-    % Determine if loud (you may need to adjust threshold)
-    threshold = 0.12;  % Adjust based on your audio
-    if(peakAmplitude > 0.6)
-        isLoud = 1;
-    else
-        isLoud = energy > threshold;
-    end
-
-    loudness = acousticLoudness(wordSegment, fs);
-    
-    % Print result
-    fprintf('Word: %s \t Peak Amplitude: %.4f \t Energy: %.4f \t normalisedEnergy: %.4f \t Band_Energy: %.4f \t normalisedBand_Energy: %.4f \t Is Loud: %.2f\n', words{i}, peakAmplitude, energy, normalizedEnergy, bandEnergy, normalizedBandEnergy, loudness);
+    bandEnergies(i) = sum(abs(S(freqBand, :)).^2, 'all');
+    normalizedBandEnergies(i) = bandEnergies(i) / duration;
 end
 
-% The above code gives the audio characteristics like peak amplitude, energy, normalized energy, band energy, normalized band energy to determine if the word is loud or not.
-% Assumption: The threshold value is set to 0.12 currently (can adjust it later)
-% the band for human voice is taken to be from 40 to 500 Hz (got this idea by plotting by FFT of the audio signal)
-% Observation: if amplitude > 0.6, sure shot 100% loud word (based on the data given)
-% Check the word told in the 6th txt, parameters shows that it shows be loud
+% Calculate means
+meanPeakAmplitude = mean(peakAmplitudes);
+meanEnergy = mean(energies);
+meanNormalizedEnergy = mean(normalizedEnergies);
+meanNormalizedBandEnergy = mean(normalizedBandEnergies);
+
+fprintf('\nMean Values:\n');
+fprintf('Mean Peak Amplitude: %.5f\n', meanPeakAmplitude);
+fprintf('Mean Energy: %.5f\n', meanEnergy);
+fprintf('Mean normalizedEnergy: %.5f\n', meanNormalizedEnergy);
+fprintf('Mean normalizedBand_Energy: %.5f\n', meanNormalizedBandEnergy);
+
+% Second pass - determine loudness using new conditions
+fprintf('\nWord Analysis:\n');
+for i = 1:length(words)
+    % Condition 3: Check if peak amplitude is greater than mean
+    isPeakHigher = peakAmplitudes(i) > meanPeakAmplitude;
+    
+    % Condition 1: Check if energy is greater than 2 * mean energy
+    isEnergyHigher = energies(i) > 2 * meanEnergy;
+
+    % Condition 4: Check if normalised band energy is greater than 2*mean normalised band energy
+    isBandEnergyHigher = normalizedBandEnergies(i) > 2 * meanNormalizedBandEnergy;
+    
+    % Apply the conditions in order
+    isLoud = 0;
+    if isPeakHigher  % First check condition 3
+        if isBandEnergyHigher  % Then check condition 4
+            isLoud = 1;
+        elseif isEnergyHigher  % Then check condition 1
+            isLoud = 1;
+        end
+    end
+    fprintf('Word: %s \t Peak Amplitude: %.4f \t Energy: %.4f \t Is Loud: %d\n', words{i}, peakAmplitudes(i), energies(i), isLoud);
+end
+
