@@ -1,35 +1,39 @@
 clc, clearvars, close all;
 
 % Load data and set sampling frequency
-load('E1.mat');
+load('E2.mat');
 Fs = 128;
 
+% Apply noise filtering with adjusted parameters
+[b, a] = butter(3, 30/(Fs/2), 'low');  % Slightly reduced cutoff frequency
+E2 = filtfilt(b, a, E2);
+
 % Create time vector
-t = (0:length(E1)-1)/Fs;
+t = (0:length(E2)-1)/Fs;
 
 % Adaptive threshold for R-peak detection
 window_duration = 5;
 window_samples = window_duration * Fs;
-threshold = zeros(size(E1));
+threshold = zeros(size(E2));
 
-for i = 1:window_samples:length(E1)
-    window_end = min(i + window_samples - 1, length(E1));
-    window_data = E1(i:window_end);
+for i = 1:window_samples:length(E2)
+    window_end = min(i + window_samples - 1, length(E2));
+    window_data = E2(i:window_end);
     threshold(i:window_end) = mean(window_data) + 1.5*std(window_data);
 end
 
 % R-peak detection
-[~, R_locs] = findpeaks(E1, ...
+[~, R_locs] = findpeaks(E2, ...
     'MinPeakHeight', mean(threshold), ...
     'MinPeakDistance', 0.25*Fs);
 
 % Estimate BPM for each second
-bpmVals = zeros(1, floor(length(E1)/Fs));
+bpmVals = zeros(1, floor(length(E2)/Fs));
 
 for sec = 1:length(bpmVals)
     % Define time window (30 seconds before and after)
     start_time = max(1, (sec-1)*Fs - 30*Fs);
-    end_time = min(length(E1), (sec-1)*Fs + 30*Fs);
+    end_time = min(length(E2), (sec-1)*Fs + 30*Fs);
     
     % Find R-peaks in the window
     window_peaks = R_locs((R_locs >= start_time) & (R_locs <= end_time));
@@ -50,9 +54,9 @@ end
 % Visualization
 figure;
 subplot(2,1,1);
-plot(t, E1);
+plot(t, E2);
 hold on;
-plot(t(R_locs), E1(R_locs), 'ro', 'MarkerSize', 8);
+plot(t(R_locs), E2(R_locs), 'ro', 'MarkerSize', 8);
 xlabel('Time (s)');
 ylabel('ECG Amplitude');
 title('ECG Signal with R-peaks');
@@ -75,19 +79,19 @@ fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 
 % Calculate how many complete minutes of data we want
 samples_per_minute = 60 * Fs;
-total_complete_minutes = floor(length(E1)/(samples_per_minute));
+total_complete_minutes = floor(length(E2)/(samples_per_minute));
 samples_to_keep = total_complete_minutes * samples_per_minute;
 
 % Trim the signal to exact multiple of minutes
-E1_trimmed = E1(1:samples_to_keep);
+E2_trimmed = E2(1:samples_to_keep);
 
 % Create time vector for trimmed signal
-t = (0:length(E1_trimmed)-1)/Fs;
+t = (0:length(E2_trimmed)-1)/Fs;
 
 % Figure 1: Plot full trimmed ECG signal
 figure;
 subplot(2,1,1);
-plot(t, E1_trimmed);
+plot(t, E2_trimmed);
 xlabel('Time (s)');
 ylabel('ECG Amplitude');
 title('Noise-Free ECG Signal (Trimmed to Complete Minutes)');
@@ -97,18 +101,18 @@ grid on;
 % First find all R-peaks at once with adaptive threshold
 window_duration = 5; % 5 seconds for calculating local statistics
 window_samples = window_duration * Fs;
-signal_length = length(E1_trimmed);
-threshold = zeros(size(E1_trimmed));
+signal_length = length(E2_trimmed);
+threshold = zeros(size(E2_trimmed));
 
 % Calculate adaptive threshold
 for i = 1:window_samples:signal_length
     window_end = min(i + window_samples - 1, signal_length);
-    window_data = E1_trimmed(i:window_end);
+    window_data = E2_trimmed(i:window_end);
     threshold(i:window_end) = mean(window_data) + 1.5*std(window_data);
 end
 
 % Find R-peaks using the adaptive threshold
-[pks, R_locs] = findpeaks(E1_trimmed, ...
+[pks, R_locs] = findpeaks(E2_trimmed, ...
     'MinPeakHeight', mean(threshold), ...
     'MinPeakDistance', 0.25*Fs);  % Minimum 0.5 seconds between peaks
 
@@ -119,7 +123,7 @@ bpmVals = zeros(1, total_minutes);
 % Overlay R-peak detection on the ECG plot
 subplot(2,1,1);
 hold on;
-plot(t(R_locs), E1_trimmed(R_locs), 'ro', 'MarkerSize', 8);
+plot(t(R_locs), E2_trimmed(R_locs), 'ro', 'MarkerSize', 8);
 title(sprintf('ECG Signal with Detected R-peaks (Total: %d)', length(R_locs)));
 
 for minute = 1:total_minutes
@@ -193,12 +197,12 @@ for minute = 1:minutes_to_plot
     time_range = t(start_sample:end_sample);
     
     % Plot ECG signal for this minute
-    plot(time_range, E1_trimmed(start_sample:end_sample), 'b');
+    plot(time_range, E2_trimmed(start_sample:end_sample), 'b');
     hold on;
     
     % Find and plot R-peaks for this minute
     minute_peaks = R_locs((R_locs >= start_sample) & (R_locs <= end_sample));
-    plot(t(minute_peaks), E1_trimmed(minute_peaks), 'ro', 'MarkerSize', 8);
+    plot(t(minute_peaks), E2_trimmed(minute_peaks), 'ro', 'MarkerSize', 8);
     
     % Add labels and title
     xlabel('Time (s)');
@@ -216,7 +220,7 @@ for minute = 1:minutes_to_plot
         'BackgroundColor', 'white');
     
     % Set consistent y-axis limits across all minutes
-    ylim([min(E1_trimmed) max(E1_trimmed)]);
+    ylim([min(E2_trimmed) max(E2_trimmed)]);
     
     % Adjust figure size and position
     set(gcf, 'Position', [100 100 800 400]);
