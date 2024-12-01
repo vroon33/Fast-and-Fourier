@@ -168,20 +168,19 @@ Helper Function (estimate_noise) [Lines 61-83]:
     
 ```matlab
     function plotfft(audio,fs)
-    % Take the FFT of the audio signal
-    n = length(audio);  % Number of samples
-    f = (0:n-1)*(fs/n);  % Frequency range
-    y = fft(audio);  % Compute the FFT
+      % Take the FFT of the audio signal
+      n = length(audio);  % Number of samples
+      f = (0:n-1)*(fs/n);  % Frequency range
+      y = fft(audio);  % Compute the FFT
 
-    % Plot the magnitude of the FFT
-    % figure;
-    plot(f, abs(y));
-    title('Magnitude of FFT of Audio Signal');
-    xlabel('Frequency (Hz)');
-    ylabel('Magnitude');
-    xlim([0 fs/2]);  % Plot up to the Nyquist frequency
-    grid on;
-end
+      % Plot the magnitude of the FFT
+      plot(f, abs(y));
+      title('Magnitude of FFT of Audio Signal');
+      xlabel('Frequency (Hz)');
+      ylabel('Magnitude');
+      xlim([0 fs/2]);  % Plot up to the Nyquist frequency
+      grid on;
+   end
 ```
 
 - **Effects of Frequency on Audio**
@@ -234,10 +233,46 @@ end
     % Play the filtered audio
     sound(filteredAudio, fs);
     end
-end
 ```
 
 The above function helps us to find frequency range for which the audio remains unchanged by listening as well as plotting the frequency domain of the original and filtered audio.
 
+- **Energy Plots (Variation of Energy with Time)**
 
-
+```matlab
+   function energyPlot(audio, fs)
+    % Window size (adjust as needed)
+    windowSize = round(0.01 * fs);  % 10 ms window
+    
+    % Overlap between windows
+    % overlap = round(windowSize / 2);
+    overlap = 0;
+    
+    % Initialize energy array
+    energyOverTime = zeros(1, ceil(length(audio) / (windowSize - overlap)));
+    
+    % Calculate energy for each window
+    for i = 1:length(energyOverTime)
+        % Calculate start and end of current window
+        startIdx = 1 + (i-1) * (windowSize - overlap);
+        endIdx = min(startIdx + windowSize - 1, length(audio));
+        
+        % Extract window
+        window = audio(startIdx:endIdx);
+        
+        % Calculate instantaneous energy (squared amplitude)
+        energyOverTime(i) = sum(window.^2);
+    end
+    
+    % Create time axis
+    timeAxis = ((0:length(energyOverTime)-1) * (windowSize - overlap)) / fs;
+    
+    % Plot energy over time
+    figure;
+    plot(timeAxis, energyOverTime);
+    title('Energy vs Time');
+    xlabel('Time (seconds)');
+    ylabel('Energy (Squared Amplitude)');
+    grid on;
+   end
+```

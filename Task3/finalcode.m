@@ -121,7 +121,7 @@ end
 
 function energyPlot(audio, fs)
     % Window size (adjust as needed)
-    windowSize = round(0.01 * fs);  % 10 ms window
+    windowSize = round(0.005 * fs);  % 10 ms window
     
     % Overlap between windows
     % overlap = round(windowSize / 2);
@@ -155,6 +155,7 @@ function energyPlot(audio, fs)
     grid on;
 end
 
+fprintf('Audio - 9\n');
 [audio, fs] = audioread('9.mp3'); 
 [words, startTimes, endTimes, isLouder] = readTimeFile('9.txt');
 
@@ -217,8 +218,8 @@ meanNormalizedBandEnergy = mean(normalizedBandEnergies);
 fprintf('\nMean Values:\n');
 fprintf('Mean Peak Amplitude: %.5f\n', meanPeakAmplitude);
 fprintf('Mean Energy: %.5f\n', meanEnergy);
-fprintf('Mean normalizedEnergy: %.5f\n', meanNormalizedEnergy);
-fprintf('Mean normalizedBand_Energy: %.5f\n', meanNormalizedBandEnergy);
+% fprintf('Mean normalizedEnergy: %.5f\n', meanNormalizedEnergy);
+fprintf('Mean Normalized Band Energy: %.5f\n', meanNormalizedBandEnergy);
 
 % Second pass - determine loudness using new conditions
 fprintf('\nWord Analysis:\n');
@@ -241,6 +242,6 @@ for i = 1:length(words)
             isLoud = 1;
         end
     end
-    fprintf('Word: %s \t Peak Amplitude: %.4f \t Energy: %.4f \t Is Loud: %d\n', words{i}, peakAmplitudes(i), energies(i), isLoud);
+    fprintf('Word: %s \t Peak Amplitude: %.4f \t Energy: %.4f \t Normalised Band Energy: %.4f \t Is Loud: %d\n', words{i}, peakAmplitudes(i), energies(i), normalizedBandEnergies(i), isLoud);
 end
 

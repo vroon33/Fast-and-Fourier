@@ -28,7 +28,9 @@ function [energy,samplerate] = energycal(y, fs)
 end
 
 % Read the audio file
-    [y, fs] = audioread('8.mp3');
+    fprintf('Audio - 9\n');
+    [y, fs] = audioread('9.mp3');
+    [~, ~, ~, ~] = readTimeFile('9.txt');
     
     % Convert stereo to mono if necessary
     if size(y, 2) > 1
@@ -74,7 +76,7 @@ end
         segmentDuration = offsetTime(i) - onsetTime(i);
         
         if segmentDuration > 0.045 && segmentDuration < 4.0
-            if i < length(speechOnsets) && (onsetTime(i+1) - offsetTime(i) < 0.02)
+            if i < length(speechOnsets) && (onsetTime(i+1) - offsetTime(i) < 0.005)
             % Combine segments
             wordTimestamps(end+1, 1:2) = [onsetTime(i), offsetTime(i+1)];
             i=i+2;
@@ -145,9 +147,9 @@ end
     % Plot emphasized segments
     subplot(3,1,3);
     plot(timeAxis, emphasized);
-    title('Emphasized Segments (1 = emphasized)');
+    title('Detected Word Segments');
     xlabel('Time (s)');
-    ylabel('Emphasis Detection');
+    ylabel('Word Detection');
     ylim([-0.1 1.1]);
     
     % % Print time stamps of emphasized segments
@@ -212,6 +214,8 @@ for i = 1:length(wordTimestamps)
 
     % Condition 4: Check if normalised band energy is greater than 2*mean normalised band energy
     isBandEnergyHigher = normalizedBandEnergies(i) > 2 * meanNormalizedBandEnergy;
+
+    isNormalisedEnergyHigher = normalizedEnergies(i) > 2 * meanNormalizedEnergy;
     
     % Apply the conditions in order
     isLoud = 0;
@@ -222,5 +226,5 @@ for i = 1:length(wordTimestamps)
             isLoud = 1;
         end
     end
-    fprintf('From t=%.2f to %.2f \t Peak Amplitude: %.4f \t Energy: %.4f \t Is Loud: %d\n', wordTimestamps(i,1), wordTimestamps(i,2), peakAmplitudes(i), energies(i), isLoud);
+    fprintf('From t=%.2f to %.2f \t Peak Amplitude: %.4f \t Energy: %.4f \t Normalised Band Energy: %.4f \t Is Loud: %d\n', wordTimestamps(i,1), wordTimestamps(i,2), peakAmplitudes(i), energies(i), normalizedBandEnergies(i), isLoud);
 end

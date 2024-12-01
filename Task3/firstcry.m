@@ -249,6 +249,11 @@ for i = 1:length(words)
     % want to hear the audio after removing the frequencies above 5k frequency
     % remove the frequencies above 5k frequency
 
+    % To find the band energy without using the STFT
+    % Y = fft(wordSegment);
+    % freq = (0:length(Y)-1) * (fs / length(Y));
+    % bandMask = (freq >= 100 & freq <= 7000);
+    % bandEnergy = sum(abs(Y(bandMask)).^2);
 
     normalizedBandEnergy = bandEnergy / duration;
     % NOTE: 'bandEnergy' is the energy in the frequency domain but the 'energy' is in time domain.

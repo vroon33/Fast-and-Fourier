@@ -1,0 +1,1 @@
+% this is function for calculating the short time energy of the
