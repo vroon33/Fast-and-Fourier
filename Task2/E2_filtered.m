@@ -15,7 +15,7 @@ E2_trimmed = E2(1:samples_to_keep);
 t = (0:length(E2_trimmed)-1)/Fs;
 
 % Apply noise filtering with adjusted parameters
-[b, a] = butter(3, 40/(Fs/2), 'low');  % Slightly reduced cutoff frequency
+[b, a] = butter(3, 30/(Fs/2), 'low');  % Slightly reduced cutoff frequency
 ecg_filtered = filtfilt(b, a, E2_trimmed);
 
 % Normalize filtered signal to match E1's amplitude range

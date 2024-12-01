@@ -4,7 +4,7 @@ clc, clearvars;
 
 ref_files = {'bird1.wav', 'bird2.wav', 'bird3.wav'};
 
-task_file = 'bird3.wav'; % Change the Test file here
+task_file = 'F6.wav'; % Change the Test file here
 
 [task_audio, task_fs] = audioread(task_file);
 % task_audio = flip(task_audio);
@@ -98,20 +98,22 @@ fprintf('\nBest match : %s ', best_match);
 % Plot the spectrograms of the task file and best match using subplot
 figure;
 
-subplot(2, 1, 1);
+% Plot the best match spectrogram
+subplot(2, 1, 2);
 spectrogram(best_match_audio, hamming(256), 128, 256, best_match_fs, 'yaxis');
 axis xy;
 colormap('jet');
-title('Best Match Spectrogram');
+title(['Best Match Spectrogram (' best_match ')']);
 xlabel('Time (s)');
 ylabel('Frequency (kHz)');
 colorbar;
 
-subplot(2, 1, 2);
+% Plot the task audio spectrogram
+subplot(2, 1, 1);
 spectrogram(task_audio, hamming(256), 128, 256, task_fs, 'yaxis');
 axis xy;
 colormap('jet');
-title('Task Audio Spectrogram');
+title(['Task Audio Spectrogram (' task_file ')']);
 xlabel('Time (s)');
 ylabel('Frequency (kHz)');
 colorbar;

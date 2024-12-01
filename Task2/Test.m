@@ -49,29 +49,45 @@ end
 
 % Visualization
 figure;
+
+% ECG Signal with R-peaks in the first subplot
 subplot(2,1,1);
 plot(t, E1);
 hold on;
 plot(t(R_locs), E1(R_locs), 'ro', 'MarkerSize', 8);
 xlabel('Time (s)');
 ylabel('ECG Amplitude');
-title('ECG Signal with R-peaks');
+title('ECG Signal with R-peaks (E1.mat)');
 grid on;
+legend('ECG Signal', 'Detected R-peaks', 'Location', 'best');
 
+% Calculate the average BPM before using it in the legend
+avgBPM = mean(bpmVals);
+
+% Heart rate plot in the second subplot
 subplot(2,1,2);
-plot(t(1:length(bpmVals)), bpmVals, 'b-');
+% Update time vector to match the length of bpmVals
+bpm_time = (0:length(bpmVals)-1);  % Create a time vector for bpmVals, assuming 1 BPM per second
+
+plot(bpm_time, bpmVals, 'b-');
+hold on;
+
+% Add red dotted average heart rate line only in the heart rate plot
+plot([bpm_time(1) bpm_time(end)], [avgBPM avgBPM], 'r--', 'LineWidth', 1.5);
+
 xlabel('Time (s)');
 ylabel('Heart Rate (BPM)');
 title('Heart Rate Over Time');
 grid on;
+
+% Add legend for heart rate plot
+legend('Heart Rate', sprintf('Avg HR = %.1f BPM', avgBPM), 'Location', 'best');
 
 % Summary statistics
 avgBPM = mean(bpmVals);
 fprintf('Average heart rate: %.1f BPM\n', avgBPM);
 fprintf('Min heart rate: %.1f BPM\n', min(bpmVals));
 fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
-
-% ... (keep all your previous code until the summary statistics) ...
 
 % Calculate how many complete minutes of data we want
 samples_per_minute = 60 * Fs;
@@ -179,45 +195,45 @@ fprintf('Average heart rate: %.1f BPM\n', avgBPM);
 fprintf('Min heart rate: %.1f BPM\n', min(bpmVals));
 fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 
-% Add new code for plotting individual minutes
-minutes_to_plot = total_minutes;
-samples_per_minute = 60 * Fs;
+% % Add new code for plotting individual minutes
+% minutes_to_plot = total_minutes;
+% samples_per_minute = 60 * Fs;
 
-for minute = 1:minutes_to_plot
-    % Create a new figure for each minute
-    figure;
+% for minute = 1:minutes_to_plot
+%     % Create a new figure for each minute
+%     figure;
     
-    % Calculate time range for this minute
-    start_sample = (minute-1) * samples_per_minute + 1;
-    end_sample = minute * samples_per_minute;
-    time_range = t(start_sample:end_sample);
+%     % Calculate time range for this minute
+%     start_sample = (minute-1) * samples_per_minute + 1;
+%     end_sample = minute * samples_per_minute;
+%     time_range = t(start_sample:end_sample);
     
-    % Plot ECG signal for this minute
-    plot(time_range, E1_trimmed(start_sample:end_sample), 'b');
-    hold on;
+%     % Plot ECG signal for this minute
+%     plot(time_range, E1_trimmed(start_sample:end_sample), 'b');
+%     hold on;
     
-    % Find and plot R-peaks for this minute
-    minute_peaks = R_locs((R_locs >= start_sample) & (R_locs <= end_sample));
-    plot(t(minute_peaks), E1_trimmed(minute_peaks), 'ro', 'MarkerSize', 8);
+%     % Find and plot R-peaks for this minute
+%     minute_peaks = R_locs((R_locs >= start_sample) & (R_locs <= end_sample));
+%     plot(t(minute_peaks), E1_trimmed(minute_peaks), 'ro', 'MarkerSize', 8);
     
-    % Add labels and title
-    xlabel('Time (s)');
-    ylabel('ECG Amplitude');
-    title(sprintf('Minute %d - ECG Signal with R-peaks (BPM: %.1f)', ...
-        minute, bpmVals(minute)));
-    grid on;
+%     % Add labels and title
+%     xlabel('Time (s)');
+%     ylabel('ECG Amplitude');
+%     title(sprintf('Minute %d - ECG Signal with R-peaks (BPM: %.1f)', ...
+%         minute, bpmVals(minute)));
+%     grid on;
     
-    % Add text box with statistics for this minute
-    stats_text = sprintf('R-peaks detected: %d\nBPM: %.1f', ...
-        length(minute_peaks), bpmVals(minute));
-    annotation('textbox', [0.7 0.7 0.2 0.2], ...
-        'String', stats_text, ...
-        'FitBoxToText', 'on', ...
-        'BackgroundColor', 'white');
+%     % Add text box with statistics for this minute
+%     stats_text = sprintf('R-peaks detected: %d\nBPM: %.1f', ...
+%         length(minute_peaks), bpmVals(minute));
+%     annotation('textbox', [0.7 0.7 0.2 0.2], ...
+%         'String', stats_text, ...
+%         'FitBoxToText', 'on', ...
+%         'BackgroundColor', 'white');
     
-    % Set consistent y-axis limits across all minutes
-    ylim([min(E1_trimmed) max(E1_trimmed)]);
+%     % Set consistent y-axis limits across all minutes
+%     ylim([min(E1_trimmed) max(E1_trimmed)]);
     
-    % Adjust figure size and position
-    set(gcf, 'Position', [100 100 800 400]);
-end
+%     % Adjust figure size and position
+%     set(gcf, 'Position', [100 100 800 400]);
+% end
