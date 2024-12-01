@@ -66,19 +66,19 @@ subplot(3, 2, 2);
 plot(f1, P1_E1);
 title('FFT of E1');
 xlabel('Frequency (Hz)');
-ylabel('|P1(f)|');
+ylabel('Amplitude');
 grid on;
 
 subplot(3, 2, 4);
 plot(f2, P1_E2);
 title('FFT of E2');
 xlabel('Frequency (Hz)');
-ylabel('|P1(f)|');
+ylabel('Amplitude');
 grid on;
 
 subplot(3, 2, 6);
 plot(f3, P1_E3);
 title('FFT of E3');
 xlabel('Frequency (Hz)');
-ylabel('|P1(f)|');
+ylabel('Amplitude');
 grid on;

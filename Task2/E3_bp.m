@@ -114,41 +114,41 @@ fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 minutes_to_plot = total_minutes;
 samples_per_minute = 60 * Fs;
 
-for minute = 1:minutes_to_plot
-    % Create a new figure for each minute
-    figure;
+% for minute = 1:minutes_to_plot
+%     % Create a new figure for each minute
+%     figure;
     
-    % Calculate time range for this minute
-    start_sample = (minute-1) * samples_per_minute + 1;
-    end_sample = minute * samples_per_minute;
-    time_range = t(start_sample:end_sample);
+%     % Calculate time range for this minute
+%     start_sample = (minute-1) * samples_per_minute + 1;
+%     end_sample = minute * samples_per_minute;
+%     time_range = t(start_sample:end_sample);
     
-    % Plot ECG signal for this minute
-    plot(time_range, E3_trimmed(start_sample:end_sample), 'b');
-    hold on;
+%     % Plot ECG signal for this minute
+%     plot(time_range, E3_trimmed(start_sample:end_sample), 'b');
+%     hold on;
     
-    % Find and plot R-peaks for this minute
-    minute_peaks = R_locs((R_locs >= start_sample) & (R_locs <= end_sample));
-    plot(t(minute_peaks), E3_trimmed(minute_peaks), 'ro', 'MarkerSize', 8);
+%     % Find and plot R-peaks for this minute
+%     minute_peaks = R_locs((R_locs >= start_sample) & (R_locs <= end_sample));
+%     plot(t(minute_peaks), E3_trimmed(minute_peaks), 'ro', 'MarkerSize', 8);
     
-    % Add labels and title
-    xlabel('Time (s)');
-    ylabel('ECG Amplitude');
-    title(sprintf('Minute %d - ECG Signal with R-peaks (BPM: %.1f)', ...
-        minute, bpmVals(minute)));
-    grid on;
+%     % Add labels and title
+%     xlabel('Time (s)');
+%     ylabel('ECG Amplitude');
+%     title(sprintf('Minute %d - ECG Signal with R-peaks (BPM: %.1f)', ...
+%         minute, bpmVals(minute)));
+%     grid on;
     
-    % Add text box with statistics for this minute
-    stats_text = sprintf('R-peaks detected: %d\nBPM: %.1f', ...
-        length(minute_peaks), bpmVals(minute));
-    annotation('textbox', [0.7 0.7 0.2 0.2], ...
-        'String', stats_text, ...
-        'FitBoxToText', 'on', ...
-        'BackgroundColor', 'white');
+%     % Add text box with statistics for this minute
+%     stats_text = sprintf('R-peaks detected: %d\nBPM: %.1f', ...
+%         length(minute_peaks), bpmVals(minute));
+%     annotation('textbox', [0.7 0.7 0.2 0.2], ...
+%         'String', stats_text, ...
+%         'FitBoxToText', 'on', ...
+%         'BackgroundColor', 'white');
     
-    % Set consistent y-axis limits across all minutes
-    ylim([min(E3_trimmed) max(E3_trimmed)]);
+%     % Set consistent y-axis limits across all minutes
+%     ylim([min(E3_trimmed) max(E3_trimmed)]);
     
-    % Adjust figure size and position
-    set(gcf, 'Position', [100 100 800 400]);
-end
+%     % Adjust figure size and position
+%     set(gcf, 'Position', [100 100 800 400]);
+% end

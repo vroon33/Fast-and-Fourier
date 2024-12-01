@@ -85,7 +85,7 @@ grid on;
 
 subplot(2,1,2);
 plot(f2, P1_E2, 'r');
-title('FFT of Normalized E2');
+title('FFT of Filtered E2');
 xlabel('Frequency (Hz)');
 ylabel('Magnitude');
 grid on;
