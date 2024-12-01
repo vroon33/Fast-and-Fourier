@@ -3,7 +3,7 @@ function matchBirdSound()
     [bird1, fs1] = audioread('bird1.wav');
     [bird2, fs2] = audioread('bird2.wav');
     [bird3, fs3] = audioread('bird3.wav');
-    [taskFile, fsTask] = audioread('F8.wav');
+    [taskFile, fsTask] = audioread('F7.wav');
     
     % Ensure all files have same sampling rate
     if fs1 ~= fs2 || fs2 ~= fs3 || fs3 ~= fsTask
