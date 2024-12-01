@@ -20,7 +20,7 @@ for j = 1:length(ref_files)
     ref_file = ref_files{j};
     [ref_audio, ref_fs] = audioread(ref_file);
     
-    % Compute spectrograms, using a Hamming Window for the STFTs
+    % Compute spectrograms, using a Hamming Window of 256 samples, with 50% overlap
     [task_spectrogram, task_frequencies, ~] = spectrogram(task_audio, hamming(256), 128, 256, task_fs, 'yaxis');
     [ref_spectrogram, ref_frequencies, ~] = spectrogram(ref_audio, hamming(256), 128, 256, ref_fs, 'yaxis');
     
