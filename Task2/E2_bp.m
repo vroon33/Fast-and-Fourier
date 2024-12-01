@@ -1,3 +1,5 @@
+% Noisy E2 signal HR detection
+
 % Load and plot the ECG signal
 load('E2.mat');
 Fs = 128;

@@ -1,3 +1,5 @@
+% FFTs of the mat files
+
 % Load and plot the ECG signals
 load('E1.mat'); % Ensure E1.mat contains variable E1
 load('E2.mat'); % Ensure E2.mat contains variable E2

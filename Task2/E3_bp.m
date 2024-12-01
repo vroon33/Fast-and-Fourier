@@ -1,3 +1,5 @@
+% Noisy ECG signal E3
+
 % Load and plot the ECG signal
 load('E3.mat');
 Fs = 128;
