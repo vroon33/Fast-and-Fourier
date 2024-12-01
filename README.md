@@ -18,5 +18,5 @@ For Ideas & Resources, check out [Overleaf document](https://www.overleaf.com/23
 
 ## Team Members:
 1. Vedant Pahariya (@VedantPahariya)
-2. Siddarth Gottumukkula (@IamSidd44)
+2. Siddarth Gottumukkula (@IamSid44)
 3. Varun Shastry (@GroanKing05)
