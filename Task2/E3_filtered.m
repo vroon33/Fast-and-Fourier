@@ -106,8 +106,6 @@ fprintf('Average heart rate: %.1f BPM\n', avgBPM);
 fprintf('Min heart rate: %.1f BPM\n', min(bpmVals));
 fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 
-% ... (keep all your previous code until the summary statistics) ...
-
 % Calculate how many complete minutes of data we want
 samples_per_minute = 60 * Fs;
 total_complete_minutes = floor(length(E3)/(samples_per_minute));
