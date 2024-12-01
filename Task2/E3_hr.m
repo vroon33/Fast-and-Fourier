@@ -1,35 +1,37 @@
+%% Heart Rate Estimation for unfiltered E3.mat
+
 clc, clearvars, close all;
 
 % Load data and set sampling frequency
-load('E1.mat');
+load('E3.mat');
 Fs = 128;
 
 % Create time vector
-t = (0:length(E1)-1)/Fs;
+t = (0:length(E3)-1)/Fs;
 
 % Adaptive threshold for R-peak detection
 window_duration = 5;
 window_samples = window_duration * Fs;
-threshold = zeros(size(E1));
+threshold = zeros(size(E3));
 
-for i = 1:window_samples:length(E1)
-    window_end = min(i + window_samples - 1, length(E1));
-    window_data = E1(i:window_end);
+for i = 1:window_samples:length(E3)
+    window_end = min(i + window_samples - 1, length(E3));
+    window_data = E3(i:window_end);
     threshold(i:window_end) = mean(window_data) + 1.5*std(window_data);
 end
 
 % R-peak detection
-[~, R_locs] = findpeaks(E1, ...
+[~, R_locs] = findpeaks(E3, ...
     'MinPeakHeight', mean(threshold), ...
     'MinPeakDistance', 0.25*Fs);
 
 % Estimate BPM for each second
-bpmVals = zeros(1, floor(length(E1)/Fs));
+bpmVals = zeros(1, floor(length(E3)/Fs));
 
 for sec = 1:length(bpmVals)
     % Define time window (30 seconds before and after)
     start_time = max(1, (sec-1)*Fs - 30*Fs);
-    end_time = min(length(E1), (sec-1)*Fs + 30*Fs);
+    end_time = min(length(E3), (sec-1)*Fs + 30*Fs);
     
     % Find R-peaks in the window
     window_peaks = R_locs((R_locs >= start_time) & (R_locs <= end_time));
@@ -52,12 +54,12 @@ figure;
 
 % ECG Signal with R-peaks in the first subplot
 subplot(2,1,1);
-plot(t, E1);
+plot(t, E3);
 hold on;
-plot(t(R_locs), E1(R_locs), 'ro', 'MarkerSize', 8);
+plot(t(R_locs), E3(R_locs), 'ro', 'MarkerSize', 8);
 xlabel('Time (s)');
 ylabel('ECG Amplitude');
-title('ECG Signal with R-peaks (E1.mat)');
+title('ECG Signal with R-peaks');
 grid on;
 legend('ECG Signal', 'Detected R-peaks', 'Location', 'best');
 
@@ -66,8 +68,8 @@ avgBPM = mean(bpmVals);
 
 % Heart rate plot in the second subplot
 subplot(2,1,2);
-% Update time vector to match the length of bpmVals
-bpm_time = (0:length(bpmVals)-1);  % Create a time vector for bpmVals, assuming 1 BPM per second
+% Create a time vector for the BPM values, assuming one value per second
+bpm_time = (0:length(bpmVals)-1);  % Time vector for bpmVals
 
 plot(bpm_time, bpmVals, 'b-');
 hold on;
@@ -83,27 +85,30 @@ grid on;
 % Add legend for heart rate plot
 legend('Heart Rate', sprintf('Avg HR = %.1f BPM', avgBPM), 'Location', 'best');
 
+
 % Summary statistics
 avgBPM = mean(bpmVals);
 fprintf('Average heart rate: %.1f BPM\n', avgBPM);
 fprintf('Min heart rate: %.1f BPM\n', min(bpmVals));
 fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 
+% ... (keep all your previous code until the summary statistics) ...
+
 % Calculate how many complete minutes of data we want
 samples_per_minute = 60 * Fs;
-total_complete_minutes = floor(length(E1)/(samples_per_minute));
+total_complete_minutes = floor(length(E3)/(samples_per_minute));
 samples_to_keep = total_complete_minutes * samples_per_minute;
 
 % Trim the signal to exact multiple of minutes
-E1_trimmed = E1(1:samples_to_keep);
+E3_trimmed = E3(1:samples_to_keep);
 
 % Create time vector for trimmed signal
-t = (0:length(E1_trimmed)-1)/Fs;
+t = (0:length(E3_trimmed)-1)/Fs;
 
 % Figure 1: Plot full trimmed ECG signal
 figure;
 subplot(2,1,1);
-plot(t, E1_trimmed);
+plot(t, E3_trimmed);
 xlabel('Time (s)');
 ylabel('ECG Amplitude');
 title('Noise-Free ECG Signal (Trimmed to Complete Minutes)');
@@ -113,18 +118,18 @@ grid on;
 % First find all R-peaks at once with adaptive threshold
 window_duration = 5; % 5 seconds for calculating local statistics
 window_samples = window_duration * Fs;
-signal_length = length(E1_trimmed);
-threshold = zeros(size(E1_trimmed));
+signal_length = length(E3_trimmed);
+threshold = zeros(size(E3_trimmed));
 
 % Calculate adaptive threshold
 for i = 1:window_samples:signal_length
     window_end = min(i + window_samples - 1, signal_length);
-    window_data = E1_trimmed(i:window_end);
+    window_data = E3_trimmed(i:window_end);
     threshold(i:window_end) = mean(window_data) + 1.5*std(window_data);
 end
 
 % Find R-peaks using the adaptive threshold
-[pks, R_locs] = findpeaks(E1_trimmed, ...
+[pks, R_locs] = findpeaks(E3_trimmed, ...
     'MinPeakHeight', mean(threshold), ...
     'MinPeakDistance', 0.25*Fs);  % Minimum 0.5 seconds between peaks
 
@@ -135,7 +140,7 @@ bpmVals = zeros(1, total_minutes);
 % Overlay R-peak detection on the ECG plot
 subplot(2,1,1);
 hold on;
-plot(t(R_locs), E1_trimmed(R_locs), 'ro', 'MarkerSize', 8);
+plot(t(R_locs), E3_trimmed(R_locs), 'ro', 'MarkerSize', 8);
 title(sprintf('ECG Signal with Detected R-peaks (Total: %d)', length(R_locs)));
 
 for minute = 1:total_minutes
@@ -195,9 +200,9 @@ fprintf('Average heart rate: %.1f BPM\n', avgBPM);
 fprintf('Min heart rate: %.1f BPM\n', min(bpmVals));
 fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 
-% % Add new code for plotting individual minutes
-% minutes_to_plot = total_minutes;
-% samples_per_minute = 60 * Fs;
+% Add new code for plotting individual minutes
+minutes_to_plot = total_minutes;
+samples_per_minute = 60 * Fs;
 
 % for minute = 1:minutes_to_plot
 %     % Create a new figure for each minute
@@ -209,12 +214,12 @@ fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 %     time_range = t(start_sample:end_sample);
     
 %     % Plot ECG signal for this minute
-%     plot(time_range, E1_trimmed(start_sample:end_sample), 'b');
+%     plot(time_range, E3_trimmed(start_sample:end_sample), 'b');
 %     hold on;
     
 %     % Find and plot R-peaks for this minute
 %     minute_peaks = R_locs((R_locs >= start_sample) & (R_locs <= end_sample));
-%     plot(t(minute_peaks), E1_trimmed(minute_peaks), 'ro', 'MarkerSize', 8);
+%     plot(t(minute_peaks), E3_trimmed(minute_peaks), 'ro', 'MarkerSize', 8);
     
 %     % Add labels and title
 %     xlabel('Time (s)');
@@ -232,7 +237,7 @@ fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 %         'BackgroundColor', 'white');
     
 %     % Set consistent y-axis limits across all minutes
-%     ylim([min(E1_trimmed) max(E1_trimmed)]);
+%     ylim([min(E3_trimmed) max(E3_trimmed)]);
     
 %     % Adjust figure size and position
 %     set(gcf, 'Position', [100 100 800 400]);

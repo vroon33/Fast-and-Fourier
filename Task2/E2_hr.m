@@ -1,3 +1,5 @@
+%% Heart Rate Estimation for unfiltered E2.mat
+
 clc, clearvars, close all;
 
 % Load data and set sampling frequency
