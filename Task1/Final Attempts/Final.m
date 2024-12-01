@@ -4,7 +4,7 @@ clc, clearvars;
 
 ref_files = {'bird1.wav', 'bird2.wav', 'bird3.wav'};
 
-task_file = 'F6.wav'; % Change the Test file here
+task_file = 'F8.wav'; % Change the Test file here
 
 [task_audio, task_fs] = audioread(task_file);
 % task_audio = flip(task_audio);
@@ -20,7 +20,7 @@ for j = 1:length(ref_files)
     ref_file = ref_files{j};
     [ref_audio, ref_fs] = audioread(ref_file);
     
-    % Compute spectrograms, using a Hamming Window for the STFTs
+    % Compute spectrograms, using a Hamming Window of 256 samples, with 50% overlap
     [task_spectrogram, task_frequencies, ~] = spectrogram(task_audio, hamming(256), 128, 256, task_fs, 'yaxis');
     [ref_spectrogram, ref_frequencies, ~] = spectrogram(ref_audio, hamming(256), 128, 256, ref_fs, 'yaxis');
     
@@ -76,9 +76,9 @@ for ref_bird = 1 : length(ref_files)
 end
 
 % Define weights for each stage
-dominant_freq_weight = 0.25;  % Lower weight for dominant frequency matching
-spcc_weight = 0.35;           % Lower weight for spctrogram cross-correlation
-tdcc_weight = 0.4;           % Higher weight for time-domain cross-correlation
+dominant_freq_weight = 0.25;  % Lower weight 
+spcc_weight = 0.35;           % Lower weight 
+tdcc_weight = 0.4;           % Higher weight
 
 % Combine the normalized scores with weights
 combined_scores = dominant_freq_weight * normalized_dominant_freq_scores ...
@@ -90,9 +90,6 @@ combined_scores = dominant_freq_weight * normalized_dominant_freq_scores ...
 best_match = ref_files{best_idx};
 [best_match_audio, best_match_fs] = audioread(best_match);
 
-% fprintf('\nBird 1 Match : %.4f', combined_scores(1));
-% fprintf('\nBird 2 Match : %.4f', combined_scores(2));
-% fprintf('\nBird 3 Match : %.4f\n', combined_scores(3));
 fprintf('\nBest match : %s ', best_match);
 
 % Plot the spectrograms of the task file and best match using subplot

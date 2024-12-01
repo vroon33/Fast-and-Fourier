@@ -1,15 +1,15 @@
-% FFTs of the mat files
+%% FFTs of the mat files
 
 % Load and plot the ECG signals
-load('E1.mat'); % Ensure E1.mat contains variable E1
-load('E2.mat'); % Ensure E2.mat contains variable E2
-load('E3.mat'); % Ensure E3.mat contains variable E3
+load('E1.mat'); 
+load('E2.mat'); 
+load('E3.mat'); 
 
 Fs = 128;       % Sampling frequency
-T = 1 / Fs;     % Sampling period
-L1 = length(E1); % Length of E1
-L2 = length(E2); % Length of E2
-L3 = length(E3); % Length of E3
+T = 1 / Fs;     
+L1 = length(E1); 
+L2 = length(E2);
+L3 = length(E3); 
 
 t1 = (0:L1-1) * T; % Time vector for E1
 t2 = (0:L2-1) * T; % Time vector for E2
