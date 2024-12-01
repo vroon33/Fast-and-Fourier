@@ -1,7 +1,100 @@
-% Load ECG signal
-load('E2.mat');  % Load your noisy ECG file
-load('E1.mat');
+clc, clearvars, close all;
+
+% Load data and set sampling frequency
+load('E2.mat');
 Fs = 128;
+
+% Apply noise filtering with adjusted parameters
+[b, a] = butter(3, 30/(Fs/2), 'low');  % Slightly reduced cutoff frequency
+E2 = filtfilt(b, a, E2);
+
+% Create time vector
+t = (0:length(E2)-1)/Fs;
+
+% Adaptive threshold for R-peak detection
+window_duration = 5;
+window_samples = window_duration * Fs;
+threshold = zeros(size(E2));
+
+for i = 1:window_samples:length(E2)
+    window_end = min(i + window_samples - 1, length(E2));
+    window_data = E2(i:window_end);
+    threshold(i:window_end) = mean(window_data) + 1.5*std(window_data);
+end
+
+% R-peak detection
+[~, R_locs] = findpeaks(E2, ...
+    'MinPeakHeight', mean(threshold), ...
+    'MinPeakDistance', 0.25*Fs);
+
+% Estimate BPM for each second
+bpmVals = zeros(1, floor(length(E2)/Fs));
+
+for sec = 1:length(bpmVals)
+    % Define time window (30 seconds before and after)
+    start_time = max(1, (sec-1)*Fs - 30*Fs);
+    end_time = min(length(E2), (sec-1)*Fs + 30*Fs);
+    
+    % Find R-peaks in the window
+    window_peaks = R_locs((R_locs >= start_time) & (R_locs <= end_time));
+    
+    % Calculate BPM
+    if length(window_peaks) > 1
+        RR_intervals = diff(window_peaks) / Fs;
+        bpmVals(sec) = 60 / mean(RR_intervals);
+    else
+        if sec > 1
+            bpmVals(sec) = bpmVals(sec-1);
+        else
+            bpmVals(sec) = 0;
+        end
+    end
+end
+
+% Visualization
+figure;
+
+% ECG Signal with R-peaks in the first subplot
+subplot(2,1,1);
+plot(t, E2);
+hold on;
+plot(t(R_locs), E2(R_locs), 'ro', 'MarkerSize', 8);
+xlabel('Time (s)');
+ylabel('ECG Amplitude');
+title('ECG Signal with R-peaks (E2.mat)');
+grid on;
+
+% Calculate the average BPM before using it in the legend
+avgBPM = mean(bpmVals);
+
+% Add legend for ECG signal plot
+legend('ECG Signal', 'Detected R-peaks', sprintf('Avg HR = %.1f BPM', avgBPM), 'Location', 'best');
+
+% Heart rate plot in the second subplot
+subplot(2,1,2);
+% Update time vector to match the length of bpmVals
+bpm_time = (0:length(bpmVals)-1);  % Create a time vector for bpmVals, assuming 1 BPM per second
+
+plot(bpm_time, bpmVals, 'b-');
+hold on;
+
+% Add red dotted average heart rate line only in the heart rate plot
+plot([bpm_time(1) bpm_time(end)], [avgBPM avgBPM], 'r--', 'LineWidth', 1.5);
+
+xlabel('Time (s)');
+ylabel('Heart Rate (BPM)');
+title('Heart Rate Over Time');
+grid on;
+
+% Add legend for heart rate plot
+legend('Heart Rate', sprintf('Avg HR = %.1f BPM', avgBPM), 'Location', 'best');
+
+
+% Summary statistics
+avgBPM = mean(bpmVals);
+fprintf('Average heart rate: %.1f BPM\n', avgBPM);
+fprintf('Min heart rate: %.1f BPM\n', min(bpmVals));
+fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 
 % Calculate how many complete minutes of data we want
 samples_per_minute = 60 * Fs;
@@ -14,117 +107,43 @@ E2_trimmed = E2(1:samples_to_keep);
 % Create time vector for trimmed signal
 t = (0:length(E2_trimmed)-1)/Fs;
 
-% Apply noise filtering with adjusted parameters
-[b, a] = butter(3, 30/(Fs/2), 'low');  % Slightly reduced cutoff frequency
-ecg_filtered = filtfilt(b, a, E2_trimmed);
-
-% Normalize filtered signal to match E1's amplitude range
-E1_trimmed = E1(1:samples_to_keep);  % Trim E1 to same length
-E1_range = max(E1_trimmed) - min(E1_trimmed);
-filtered_range = max(ecg_filtered) - min(ecg_filtered);
-scaling_factor = E1_range / filtered_range;
-
-% Scale the filtered signal with slightly adjusted scaling
-scaling_factor = scaling_factor * 0.95;  % Reduce scaling slightly
-ecg_filtered = ecg_filtered * scaling_factor;
-
-% Adjust DC offset to match E1's mean
-ecg_filtered = ecg_filtered - mean(ecg_filtered) + mean(E1_trimmed);
-
-% Plot comparison of signals
-figure;
-subplot(3,1,1);
-plot(t, E1_trimmed);
-title('Reference Clean ECG (E1)');
-xlabel('Time (s)');
-ylabel('Amplitude');
-grid on;
-
-subplot(3,1,2);
-plot(t, E2_trimmed);
-title('Original Noisy ECG Signal');
-xlabel('Time (s)');
-ylabel('Amplitude');
-grid on;
-
-subplot(3,1,3);
-plot(t, ecg_filtered);
-title('Filtered ECG Signal (Amplitude Matched)');
-xlabel('Time (s)');
-ylabel('Amplitude');
-grid on;
-
-% Normalize E1 and E2 signals
-E1_normalized = E1 / max(abs(E1)); % Normalize E1 to range [-1, 1]
-E2_normalized = E2 / max(abs(E2)); % Normalize E2 to range [-1, 1]
-
-% Compute FFT of normalized E1
-L1 = length(E1_normalized);
-E1_fft = fft(E1_normalized);
-P2_E1 = abs(E1_fft / L1); 
-P1_E1 = P2_E1(1:L1/2+1);
-P1_E1(2:end-1) = 2 * P1_E1(2:end-1);
-f1 = Fs * (0:(L1/2)) / L1;
-
-% Compute FFT of filtered E2
-L2 = length(ecg_filtered);
-E2_fft = fft(ecg_filtered);
-P2_E2 = abs(E2_fft / L2);
-P1_E2 = P2_E2(1:L2/2+1);
-P1_E2(2:end-1) = 2 * P1_E2(2:end-1);
-f2 = Fs * (0:(L2/2)) / L2;
-
-% Plot FFTs
+% Figure 1: Plot full trimmed ECG signal
 figure;
 subplot(2,1,1);
-plot(f1, P1_E1, 'b');
-title('FFT of Normalized E1');
-xlabel('Frequency (Hz)');
-ylabel('Magnitude');
+plot(t, E2_trimmed);
+xlabel('Time (s)');
+ylabel('ECG Amplitude');
+title('Noise-Free ECG Signal (Trimmed to Complete Minutes)');
 grid on;
 
-subplot(2,1,2);
-plot(f2, P1_E2, 'r');
-title('FFT of Filtered E2');
-xlabel('Frequency (Hz)');
-ylabel('Magnitude');
-grid on;
-
-% Adjust figure layout
-set(gcf, 'Position', [100, 100, 800, 600]);
-
-% Improved R-peak detection on filtered signal
+% Improved R-peak detection
+% First find all R-peaks at once with adaptive threshold
 window_duration = 5; % 5 seconds for calculating local statistics
 window_samples = window_duration * Fs;
-signal_length = length(ecg_filtered);
-threshold = zeros(size(ecg_filtered));
+signal_length = length(E2_trimmed);
+threshold = zeros(size(E2_trimmed));
 
 % Calculate adaptive threshold
 for i = 1:window_samples:signal_length
     window_end = min(i + window_samples - 1, signal_length);
-    window_data = ecg_filtered(i:window_end);
+    window_data = E2_trimmed(i:window_end);
     threshold(i:window_end) = mean(window_data) + 1.5*std(window_data);
 end
 
 % Find R-peaks using the adaptive threshold
-[pks, R_locs] = findpeaks(ecg_filtered, ...
+[pks, R_locs] = findpeaks(E2_trimmed, ...
     'MinPeakHeight', mean(threshold), ...
-    'MinPeakDistance', 0.25*Fs);  % Minimum 0.25 seconds between peaks
+    'MinPeakDistance', 0.25*Fs);  % Minimum 0.5 seconds between peaks
 
 % Calculate BPM values for each minute
 total_minutes = total_complete_minutes;
 bpmVals = zeros(1, total_minutes);
 
-% Create new figure for R-peak detection and heart rate
-figure;
+% Overlay R-peak detection on the ECG plot
 subplot(2,1,1);
-plot(t, ecg_filtered);
 hold on;
-plot(t(R_locs), ecg_filtered(R_locs), 'ro', 'MarkerSize', 8);
-title(sprintf('Filtered ECG Signal with Detected R-peaks (Total: %d)', length(R_locs)));
-xlabel('Time (s)');
-ylabel('Amplitude');
-grid on;
+plot(t(R_locs), E2_trimmed(R_locs), 'ro', 'MarkerSize', 8);
+title(sprintf('ECG Signal with Detected R-peaks (Total: %d)', length(R_locs)));
 
 for minute = 1:total_minutes
     % Time window for current minute
@@ -157,7 +176,7 @@ end
 % Calculate average BPM
 avgBPM = mean(bpmVals);
 
-% Plot heart rate
+% Figure 1 (continued): Plot heart rate
 subplot(2,1,2);
 time_mins = 1:total_minutes;
 plot(time_mins, bpmVals, 'b-o', 'LineWidth', 2);
@@ -182,3 +201,46 @@ fprintf('Average R-peaks per minute: %.1f\n', length(R_locs)/total_minutes);
 fprintf('Average heart rate: %.1f BPM\n', avgBPM);
 fprintf('Min heart rate: %.1f BPM\n', min(bpmVals));
 fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
+
+% % Add new code for plotting individual minutes
+% minutes_to_plot = total_minutes;
+% samples_per_minute = 60 * Fs;
+
+% for minute = 1:minutes_to_plot
+%     % Create a new figure for each minute
+%     figure;
+    
+%     % Calculate time range for this minute
+%     start_sample = (minute-1) * samples_per_minute + 1;
+%     end_sample = minute * samples_per_minute;
+%     time_range = t(start_sample:end_sample);
+    
+%     % Plot ECG signal for this minute
+%     plot(time_range, E2_trimmed(start_sample:end_sample), 'b');
+%     hold on;
+    
+%     % Find and plot R-peaks for this minute
+%     minute_peaks = R_locs((R_locs >= start_sample) & (R_locs <= end_sample));
+%     plot(t(minute_peaks), E2_trimmed(minute_peaks), 'ro', 'MarkerSize', 8);
+    
+%     % Add labels and title
+%     xlabel('Time (s)');
+%     ylabel('ECG Amplitude');
+%     title(sprintf('Minute %d - ECG Signal with R-peaks (BPM: %.1f)', ...
+%         minute, bpmVals(minute)));
+%     grid on;
+    
+%     % Add text box with statistics for this minute
+%     stats_text = sprintf('R-peaks detected: %d\nBPM: %.1f', ...
+%         length(minute_peaks), bpmVals(minute));
+%     annotation('textbox', [0.7 0.7 0.2 0.2], ...
+%         'String', stats_text, ...
+%         'FitBoxToText', 'on', ...
+%         'BackgroundColor', 'white');
+    
+%     % Set consistent y-axis limits across all minutes
+%     ylim([min(E2_trimmed) max(E2_trimmed)]);
+    
+%     % Adjust figure size and position
+%     set(gcf, 'Position', [100 100 800 400]);
+% end

@@ -1,8 +1,96 @@
-% Noisy E2 signal HR detection
+clc, clearvars, close all;
 
-% Load and plot the ECG signal
+% Load data and set sampling frequency
 load('E2.mat');
 Fs = 128;
+
+% Create time vector
+t = (0:length(E2)-1)/Fs;
+
+% Adaptive threshold for R-peak detection
+window_duration = 5;
+window_samples = window_duration * Fs;
+threshold = zeros(size(E2));
+
+for i = 1:window_samples:length(E2)
+    window_end = min(i + window_samples - 1, length(E2));
+    window_data = E2(i:window_end);
+    threshold(i:window_end) = mean(window_data) + 1.5*std(window_data);
+end
+
+% R-peak detection
+[~, R_locs] = findpeaks(E2, ...
+    'MinPeakHeight', mean(threshold), ...
+    'MinPeakDistance', 0.25*Fs);
+
+% Estimate BPM for each second
+bpmVals = zeros(1, floor(length(E2)/Fs));
+
+for sec = 1:length(bpmVals)
+    % Define time window (30 seconds before and after)
+    start_time = max(1, (sec-1)*Fs - 30*Fs);
+    end_time = min(length(E2), (sec-1)*Fs + 30*Fs);
+    
+    % Find R-peaks in the window
+    window_peaks = R_locs((R_locs >= start_time) & (R_locs <= end_time));
+    
+    % Calculate BPM
+    if length(window_peaks) > 1
+        RR_intervals = diff(window_peaks) / Fs;
+        bpmVals(sec) = 60 / mean(RR_intervals);
+    else
+        if sec > 1
+            bpmVals(sec) = bpmVals(sec-1);
+        else
+            bpmVals(sec) = 0;
+        end
+    end
+end
+
+% Visualization
+figure;
+
+% ECG Signal with R-peaks in the first subplot
+subplot(2,1,1);
+plot(t, E2);
+hold on;
+plot(t(R_locs), E2(R_locs), 'ro', 'MarkerSize', 8);
+xlabel('Time (s)');
+ylabel('ECG Amplitude');
+title('ECG Signal with R-peaks (E2.mat)');
+grid on;
+
+% Calculate the average BPM before using it in the legend
+avgBPM = mean(bpmVals);
+
+% Add legend for ECG signal plot
+legend('ECG Signal', 'Detected R-peaks', sprintf('Avg HR = %.1f BPM', avgBPM), 'Location', 'best');
+
+% Heart rate plot in the second subplot
+subplot(2,1,2);
+% Update time vector to match the length of bpmVals
+bpm_time = (0:length(bpmVals)-1);  % Create a time vector for bpmVals, assuming 1 BPM per second
+
+plot(bpm_time, bpmVals, 'b-');
+hold on;
+
+% Add red dotted average heart rate line only in the heart rate plot
+plot([bpm_time(1) bpm_time(end)], [avgBPM avgBPM], 'r--', 'LineWidth', 1.5);
+
+xlabel('Time (s)');
+ylabel('Heart Rate (BPM)');
+title('Heart Rate Over Time');
+grid on;
+
+% Add legend for heart rate plot
+legend('Heart Rate', sprintf('Avg HR = %.1f BPM', avgBPM), 'Location', 'best');
+
+
+% Summary statistics
+avgBPM = mean(bpmVals);
+fprintf('Average heart rate: %.1f BPM\n', avgBPM);
+fprintf('Min heart rate: %.1f BPM\n', min(bpmVals));
+fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 
 % Calculate how many complete minutes of data we want
 samples_per_minute = 60 * Fs;
@@ -110,45 +198,45 @@ fprintf('Average heart rate: %.1f BPM\n', avgBPM);
 fprintf('Min heart rate: %.1f BPM\n', min(bpmVals));
 fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 
-% Add new code for plotting individual minutes
-minutes_to_plot = total_minutes;
-samples_per_minute = 60 * Fs;
+% % Add new code for plotting individual minutes
+% minutes_to_plot = total_minutes;
+% samples_per_minute = 60 * Fs;
 
-for minute = 1:minutes_to_plot
-    % Create a new figure for each minute
-    figure;
+% for minute = 1:minutes_to_plot
+%     % Create a new figure for each minute
+%     figure;
     
-    % Calculate time range for this minute
-    start_sample = (minute-1) * samples_per_minute + 1;
-    end_sample = minute * samples_per_minute;
-    time_range = t(start_sample:end_sample);
+%     % Calculate time range for this minute
+%     start_sample = (minute-1) * samples_per_minute + 1;
+%     end_sample = minute * samples_per_minute;
+%     time_range = t(start_sample:end_sample);
     
-    % Plot ECG signal for this minute
-    plot(time_range, E2_trimmed(start_sample:end_sample), 'b');
-    hold on;
+%     % Plot ECG signal for this minute
+%     plot(time_range, E2_trimmed(start_sample:end_sample), 'b');
+%     hold on;
     
-    % Find and plot R-peaks for this minute
-    minute_peaks = R_locs((R_locs >= start_sample) & (R_locs <= end_sample));
-    plot(t(minute_peaks), E2_trimmed(minute_peaks), 'ro', 'MarkerSize', 8);
+%     % Find and plot R-peaks for this minute
+%     minute_peaks = R_locs((R_locs >= start_sample) & (R_locs <= end_sample));
+%     plot(t(minute_peaks), E2_trimmed(minute_peaks), 'ro', 'MarkerSize', 8);
     
-    % Add labels and title
-    xlabel('Time (s)');
-    ylabel('ECG Amplitude');
-    title(sprintf('Minute %d - ECG Signal with R-peaks (BPM: %.1f)', ...
-        minute, bpmVals(minute)));
-    grid on;
+%     % Add labels and title
+%     xlabel('Time (s)');
+%     ylabel('ECG Amplitude');
+%     title(sprintf('Minute %d - ECG Signal with R-peaks (BPM: %.1f)', ...
+%         minute, bpmVals(minute)));
+%     grid on;
     
-    % Add text box with statistics for this minute
-    stats_text = sprintf('R-peaks detected: %d\nBPM: %.1f', ...
-        length(minute_peaks), bpmVals(minute));
-    annotation('textbox', [0.7 0.7 0.2 0.2], ...
-        'String', stats_text, ...
-        'FitBoxToText', 'on', ...
-        'BackgroundColor', 'white');
+%     % Add text box with statistics for this minute
+%     stats_text = sprintf('R-peaks detected: %d\nBPM: %.1f', ...
+%         length(minute_peaks), bpmVals(minute));
+%     annotation('textbox', [0.7 0.7 0.2 0.2], ...
+%         'String', stats_text, ...
+%         'FitBoxToText', 'on', ...
+%         'BackgroundColor', 'white');
     
-    % Set consistent y-axis limits across all minutes
-    ylim([min(E2_trimmed) max(E2_trimmed)]);
+%     % Set consistent y-axis limits across all minutes
+%     ylim([min(E2_trimmed) max(E2_trimmed)]);
     
-    % Adjust figure size and position
-    set(gcf, 'Position', [100 100 800 400]);
-end
+%     % Adjust figure size and position
+%     set(gcf, 'Position', [100 100 800 400]);
+% end
