@@ -7,15 +7,15 @@ load('E3.mat');
 Fs = 128;
 
 % Apply noise filtering with multiple stages
-% First notch filter at 22 Hz with wider bandwidth
+% First notch filter at 22 Hz 
 wo1 = 22/(Fs/2);
-bw1 = wo1/100;  % Much wider bandwidth for very gentle filtering
+bw1 = wo1/100;  
 [b1, a1] = iirnotch(wo1, bw1);
 E3 = filtfilt(b1, a1, E3);
 
-% Second notch filter at 50 Hz with wider bandwidth
+% Second notch filter at 50 Hz 
 wo2 = 50/(Fs/2);
-bw2 = wo2/100;  % Much wider bandwidth for very gentle filtering
+bw2 = wo2/100;  
 [b2, a2] = iirnotch(wo2, bw2);
 E3 = filtfilt(b2, a2, E3);
 
@@ -66,7 +66,7 @@ for sec = 1:length(bpmVals)
     end
 end
 
-% Visualization
+% Plotting
 figure;
 
 % ECG Signal with R-peaks in the first subplot
@@ -101,8 +101,6 @@ grid on;
 
 % Add legend for heart rate plot
 legend('Heart Rate', sprintf('Avg HR = %.1f BPM', avgBPM), 'Location', 'best');
-
-
 
 % Summary statistics
 avgBPM = mean(bpmVals);
@@ -216,9 +214,9 @@ fprintf('Average heart rate: %.1f BPM\n', avgBPM);
 fprintf('Min heart rate: %.1f BPM\n', min(bpmVals));
 fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 
-% Add new code for plotting individual minutes
-minutes_to_plot = total_minutes;
-samples_per_minute = 60 * Fs;
+% % Plotting individual minutes
+% minutes_to_plot = total_minutes;
+% samples_per_minute = 60 * Fs;
 
 % for minute = 1:minutes_to_plot
 %     % Create a new figure for each minute
