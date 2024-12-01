@@ -19,6 +19,10 @@ bw2 = wo2/100;  % Much wider bandwidth for very gentle filtering
 [b2, a2] = iirnotch(wo2, bw2);
 E3 = filtfilt(b2, a2, E3);
 
+% Apply noise filtering with adjusted parameters
+[b, a] = butter(3, 1/(Fs/2), 'high');  % Slightly reduced cutoff frequency
+E3 = filtfilt(b, a, E3);
+
 % Create time vector
 t = (0:length(E3)-1)/Fs;
 

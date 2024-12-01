@@ -10,6 +10,10 @@ Fs = 128;
 [b, a] = butter(3, 30/(Fs/2), 'low');  % Slightly reduced cutoff frequency
 E2 = filtfilt(b, a, E2);
 
+% Apply noise filtering with adjusted parameters
+[b, a] = butter(3, 1/(Fs/2), 'high');  % Slightly reduced cutoff frequency
+E2 = filtfilt(b, a, E2);
+
 % Create time vector
 t = (0:length(E2)-1)/Fs;
 

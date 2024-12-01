@@ -28,7 +28,8 @@ function [energy,samplerate] = energycal(y, fs)
 end
 
 % Read the audio file
-    [y, fs] = audioread('8.mp3');
+    [y, fs] = audioread('2.wav');
+    % y = noisefilter(y, fs);
     
     % Convert stereo to mono if necessary
     if size(y, 2) > 1
