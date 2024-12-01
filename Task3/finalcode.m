@@ -10,41 +10,6 @@ function stereoToMono(audio, Fs)
     end
 end
 
-function plotspec(audio, Fs)
-    % Parameters for chunking
-    chunkSeconds = 0.05;  % Specify chunk length in seconds (modify this value)
-    windowLength = round(chunkSeconds * Fs);  % Convert seconds to samples
-    overlap = round(windowLength/2);  % Overlap between chunks (50% overlap)
-    nfft = windowLength;  % Number of FFT points
-
-    % Create spectrogram using built-in function
-    figure;
-    subplot(3, 1, 1);
-    spectrogram(audio, hamming(windowLength), overlap, nfft, Fs, 'yaxis');
-    colormap('jet');
-    colorbar;
-
-    % ploting the audio signal
-    subplot(3, 1, 2);
-    t = (0:length(audio)-1) / Fs;  % Time vector
-    plot(t, audio);
-    title('Audio Signal');
-    xlabel('Time (s)');
-    ylabel('Amplitude');
-    grid on;
-
-    % Play the filtered audio signal
-    sound(filteredAudio, Fs);
-    % Plot the filtered audio signal
-    subplot(3, 1, 3);   
-    t = (0:length(filteredAudio)-1) / Fs;  % Time vector
-    plot(t, filteredAudio);
-    title('Filtered Audio Signal');
-    xlabel('Time (s)');
-    ylabel('Amplitude');
-    grid on;
-end
-
 function plotfft(audio,fs)
     % Take the FFT of the audio signal
     n = length(audio);  % Number of samples
@@ -161,9 +126,6 @@ fprintf('Audio - 9\n');
 
 stereoToMono(audio, fs);
 
-% Apply filters
-% filteredAudio = noisefilter(audio,fs);
-
 % energyPlot(audio, fs);
 % % Plot the original audio signal
 % figure;
@@ -181,8 +143,6 @@ stereoToMono(audio, fs);
 % plotfft(audio, fs);
 % subplot(2, 1, 2);
 % plotfft(filteredAudio, fs);
-
-% audio = filteredAudio;
 
 % Arrays to store metrics for each word
 peakAmplitudes = zeros(1, length(words));
@@ -236,9 +196,7 @@ for i = 1:length(words)
     % Apply the conditions in order
     isLoud = 0;
     if isPeakHigher  % First check condition 3
-        if isBandEnergyHigher  % Then check condition 4
-            isLoud = 1;
-        elseif isEnergyHigher  % Then check condition 1
+        if isBandEnergyHigher || isEnergyHigher  % Then check condition 4 and 1
             isLoud = 1;
         end
     end

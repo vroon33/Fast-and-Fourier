@@ -10,6 +10,10 @@ Fs = 128;
 [b, a] = butter(3, 30/(Fs/2), 'low');  % Slightly reduced cutoff frequency
 E2 = filtfilt(b, a, E2);
 
+% Apply noise filtering with adjusted parameters
+[b, a] = butter(3, 1/(Fs/2), 'high');  % Slightly reduced cutoff frequency
+E2 = filtfilt(b, a, E2);
+
 % Create time vector
 t = (0:length(E2)-1)/Fs;
 
@@ -53,7 +57,7 @@ for sec = 1:length(bpmVals)
     end
 end
 
-% Visualization
+% Plotting
 figure;
 
 % ECG Signal with R-peaks in the first subplot
@@ -204,7 +208,7 @@ fprintf('Average heart rate: %.1f BPM\n', avgBPM);
 fprintf('Min heart rate: %.1f BPM\n', min(bpmVals));
 fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 
-% % Add new code for plotting individual minutes
+% % Plot individual minutes
 % minutes_to_plot = total_minutes;
 % samples_per_minute = 60 * Fs;
 

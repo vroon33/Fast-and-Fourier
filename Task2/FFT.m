@@ -1,11 +1,10 @@
 %% FFTs of the mat files
 
-% Load and plot the ECG signals
 load('E1.mat'); 
 load('E2.mat'); 
 load('E3.mat'); 
 
-Fs = 128;       % Sampling frequency
+Fs = 128;   
 T = 1 / Fs;     
 L1 = length(E1); 
 L2 = length(E2);

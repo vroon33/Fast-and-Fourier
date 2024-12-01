@@ -49,7 +49,7 @@ for sec = 1:length(bpmVals)
     end
 end
 
-% Visualization
+% Plotting
 figure;
 
 % ECG Signal with R-peaks in the first subplot
@@ -188,7 +188,7 @@ set(gcf, 'Position', [100 100 800 600]);
 subplot(2,1,1); box on;
 subplot(2,1,2); box on;
 
-% Print summary statistics
+% Summary statistics
 fprintf('\nECG Analysis Summary:\n');
 fprintf('Total duration: %d complete minutes\n', total_minutes);
 fprintf('Total R-peaks detected: %d\n', length(R_locs));
@@ -197,7 +197,7 @@ fprintf('Average heart rate: %.1f BPM\n', avgBPM);
 fprintf('Min heart rate: %.1f BPM\n', min(bpmVals));
 fprintf('Max heart rate: %.1f BPM\n', max(bpmVals));
 
-% % Add new code for plotting individual minutes
+% % Plotting individual minutes
 % minutes_to_plot = total_minutes;
 % samples_per_minute = 60 * Fs;
 
