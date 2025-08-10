@@ -1,7 +1,7 @@
 # M24 Signal Processing Project
 
 Team Name: Fast and Fourier  
-For Ideas & Resources, check out [Overleaf document](https://www.overleaf.com/2318613779zwyqxhsfrsmn#377a1a).
+For Ideas & Resources, check out [Overleaf document](https://www.overleaf.com/2318613779zwyqxhsfrsmn#377a1a).  
 Final Presentation: [Google Slides](https://docs.google.com/presentation/d/1Kc62N5Mnz7mT2j8xl7QDBXB0SEISjeN886geJ--z0bA/edit?slide=id.g2747bfd1ede_0_44#slide=id.g2747bfd1ede_0_44)
 ## Problem Statements:
 1. Bird Recognition
